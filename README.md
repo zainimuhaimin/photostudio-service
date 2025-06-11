@@ -6,9 +6,10 @@
 
 #cara menjalankan service ci4
 
-1. php spark migrate atau bisa import db (dump.sql) yang udah gua taro jadi tanpa migrate
-2. jika menggunakan php spark migrate lu harus jalanin query yang ada di dalam folder script terlebih dahulu untuk init data role
-3. php spark serve
-4. akses di localhost:8080 atau port yang lu pilih
+1. jalankan script "composer install"
+1. bisa import db (dump.sql) yang udah gua taro jadi tanpa migrate atau jalankan script "php spark migrate"
+1. jika menggunakan php spark migrate lu harus jalanin query yang ada di dalam folder script terlebih dahulu untuk init data role
+1. untuk menjalankan aplikasi "php spark serve"
+1. akses di localhost:8080 atau port yang lu pilih
 
 #ka
