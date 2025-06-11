@@ -55,7 +55,7 @@ class PembayaranModel extends Model
         // $query = $builder->get();
 
         $builder = $this->db->table('table_pembayaran tp');
-        $builder->select('tp.*, tpa.*, ta.*, tpj.*, tj.*');
+        $builder->select('tp.id_pembayaran as id_pembayaran, tp.metode_pembayaran as metode_pembayaran , tp.status_pembayaran as status_pembayaran, tpa.*, ta.*, tpj.*, tj.*');
 
         $builder->join('table_penyewaan_alat tpa', 'tp.id_penyewaan = tpa.id_penyewaan', 'left');
         $builder->join('table_alat ta', 'ta.id_alat = tpa.id_alat', 'left');
@@ -85,7 +85,7 @@ class PembayaranModel extends Model
         // $query = $builder->get();
 
         $builder = $this->db->table('table_pembayaran tp');
-        $builder->select('tp.*, tpa.*, ta.*, tpj.*, tj.*');
+        $builder->select('tp.id_pembayaran as id_pembayaran, tp.metode_pembayaran as metode_pembayaran , tp.status_pembayaran as status_pembayaran, tpa.*, ta.*, tpj.*, tj.*');
 
         $builder->join('table_penyewaan_alat tpa', 'tp.id_penyewaan = tpa.id_penyewaan', 'left');
         $builder->join('table_alat ta', 'ta.id_alat = tpa.id_alat', 'left');
@@ -96,11 +96,11 @@ class PembayaranModel extends Model
         return $query->getResultArray();
     }
 
-    public function getPembayaranByIdPelangganAndIdPembayaran($idPelanggan, $idPembayaran)
+    public function getPembayaranByIdPelangganAndIdPembayaran($idPelanggan, $idPembayaran, $status = null)
     {
-        error_log("ID Pelanggan: $idPelanggan, ID Pembayaran: $idPembayaran");
+        error_log("ID Pelanggan: $idPelanggan, ID Pembayaran: $idPembayaran, Status: $status");
         $builder = $this->db->table('table_pembayaran tp');
-        $builder->select('tp.*, tpa.*, ta.*, tpj.*, tj.*, tp2.*, tp3.*, tpa.tanggal as tanggal_penyewaan, tpj.tanggal as tanggal_pemesanan_jasa');
+        $builder->select('tp.id_pembayaran as id_pembayaran, tp.metode_pembayaran as metode_pembayaran , tp.status_pembayaran as status_pembayaran, tpa.*, ta.*, tpj.*, tj.*, tp2.*, tp3.*, tp2.nama as nama_pelanggan_sewa_alat, tp3.nama as nama_pelanggan_pemesan_jasa, tp2.email as email_sewa_alat, tp3.email as email_pesan_jasa, tpa.tanggal as tanggal_penyewaan, tpj.tanggal as tanggal_pemesanan_jasa');
 
         $builder->join('table_penyewaan_alat tpa', 'tp.id_penyewaan = tpa.id_penyewaan', 'left');
         $builder->join('table_alat ta', 'ta.id_alat = tpa.id_alat', 'left');
@@ -110,11 +110,33 @@ class PembayaranModel extends Model
         $builder->join('table_pelanggan tp3', 'tp3.id_pelanggan = tpj.id_pelanggan', 'left');
 
         $builder->where('tp.id_pembayaran', $idPembayaran);
+        if(!empty($status)){
+            $builder->where('tp.status_pembayaran', $status);
+        }
         // Kondisi WHERE dengan OR
         $builder->groupStart();
             $builder->where('tpa.id_pelanggan', $idPelanggan);
             $builder->orWhere('tpj.id_pelanggan', $idPelanggan);
         $builder->groupEnd();
+
+        $query = $builder->get();
+        return $query->getFirstRow();
+    }
+
+    public function getPembayaranByIdPembayaran($idPembayaran)
+    {
+        error_log("ID Pembayaran: $idPembayaran");
+        $builder = $this->db->table('table_pembayaran tp');
+        $builder->select('tp.id_pembayaran as id_pembayaran, tp.metode_pembayaran as metode_pembayaran , tp.status_pembayaran as status_pembayaran, tpa.*, ta.*, tpj.*, tj.*, tp2.*, tp3.*, tp2.nama as nama_pelanggan_sewa_alat, tp3.nama as nama_pelanggan_pemesan_jasa, tpa.tanggal as tanggal_penyewaan, tpj.tanggal as tanggal_pemesanan_jasa');
+
+        $builder->join('table_penyewaan_alat tpa', 'tp.id_penyewaan = tpa.id_penyewaan', 'left');
+        $builder->join('table_alat ta', 'ta.id_alat = tpa.id_alat', 'left');
+        $builder->join('table_pemensanan_jasa tpj', 'tpj.id_pemensanan = tp.id_pemensanan', 'left');
+        $builder->join('table_jasa tj', 'tj.id_jasa = tpj.id_jasa', 'left');
+        $builder->join('table_pelanggan tp2', 'tp2.id_pelanggan = tpa.id_pelanggan', 'left');
+        $builder->join('table_pelanggan tp3', 'tp3.id_pelanggan = tpj.id_pelanggan', 'left');
+
+        $builder->where('tp.id_pembayaran', $idPembayaran);
 
         $query = $builder->get();
         return $query->getFirstRow();
