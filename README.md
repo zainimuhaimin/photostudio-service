@@ -11,5 +11,3 @@
 1. jika menggunakan php spark migrate lu harus jalanin query yang ada di dalam folder script terlebih dahulu untuk init data role
 1. untuk menjalankan aplikasi "php spark serve"
 1. akses di localhost:8080 atau port yang lu pilih
-
-#ka
