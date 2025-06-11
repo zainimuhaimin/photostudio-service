@@ -9,6 +9,8 @@ use CodeIgniter\HTTP\ResponseInterface;
 use Constants;
 use finfo;
 
+use function PHPUnit\Framework\objectEquals;
+
 class PembayaranController extends BaseController
 {
 
@@ -90,29 +92,30 @@ class PembayaranController extends BaseController
             $user_id = session()->get('user_id');
             $pelanggan = cache()->get(Constants::PELANGGAN_KEY.$user_id);
             $buktiPembayaran = $this->request->getFile('file');
-            error_log("buktiPembayaran : ".json_encode($buktiPembayaran));
+            error_log("buktiPembayaran luar if : ".json_encode($buktiPembayaran));
             if ($buktiPembayaran && $buktiPembayaran->isValid() && !$buktiPembayaran->hasMoved()) {
-            // Ambil konten file asli
-            $originalContent = file_get_contents($buktiPembayaran->getTempName());
+                error_log("buktiPembayaran : ".json_encode($buktiPembayaran));
+                // Ambil konten file asli
+                $originalContent = file_get_contents($buktiPembayaran->getTempName());
 
-            // Kompres jika gambar
-            $mime = $buktiPembayaran->getMimeType();
-            $compressed = $originalContent;
+                // Kompres jika gambar
+                $mime = $buktiPembayaran->getMimeType();
+                $compressed = $originalContent;
 
-            if (str_starts_with($mime, 'image/')) {
-                // Buat gambar dari buktiPembayaran
-                $image = imagecreatefromstring($originalContent);
+                if (str_starts_with($mime, 'image/')) {
+                    // Buat gambar dari buktiPembayaran
+                    $image = imagecreatefromstring($originalContent);
 
-                // Kompres ke JPEG (80% quality) ke output buffer
-                ob_start();
-                imagejpeg($image, null, 80); // Kompres
-                $compressed = ob_get_clean();
-                imagedestroy($image);
+                    // Kompres ke JPEG (80% quality) ke output buffer
+                    ob_start();
+                    imagejpeg($image, null, 80); // Kompres
+                    $compressed = ob_get_clean();
+                    imagedestroy($image);
+                }
+                //TODO better jangan save as base64 karna makan storage db
+                // Encode ke base64
+                $base64 = base64_encode($compressed);
             }
-            //TODO better jangan save as base64 karna makan storage db
-            // Encode ke base64
-            $base64 = base64_encode($compressed);
-        }
 
             $idPembayaran = $this->request->getPost('id_pembayaran');
             $dataPembayaran = [
@@ -124,8 +127,9 @@ class PembayaranController extends BaseController
                 'bukti_pembayaran' => $base64,
             ];
             $pembayaranModel->update($idPembayaran, $dataPembayaran);
+            
             db_connect()->transComplete();
-            return redirect()->to('/pembayaran-table')->with('success', 'Pembayaran berhasil diupdate');
+            return redirect()->to('/pembayaran-receipt/'.$idPembayaran)->with('success', 'Pembayaran berhasil diupdate');
         } catch (\Throwable $th) {
             //throw $th;
             db_connect()->transRollback();
@@ -141,7 +145,7 @@ class PembayaranController extends BaseController
                 'bukti_pembayaran' => $base64,
                 'phone_number' => $pelanggan['no_telp'],
                 'pesanan_atau_penyewaan' => $dataPembayaran->nama_jasa == null ? $dataPembayaran->nama_alat : $dataPembayaran->nama_jasa,
-                'jadwal_pesanan_atau_penyewaan' => $dataPembayaran->tanggal_penyewaan == null? $dataPembayaran->tanggal_pemesanan : $dataPembayaran->tanggal_penyewaan,
+                'jadwal_pesanan_atau_penyewaan' => $dataPembayaran->tanggal_penyewaan == null? $dataPembayaran->tanggal_pemesanan_jasa : $dataPembayaran->tanggal_penyewaan,
             ];
             $this->sendNotif($notif);
         }
@@ -198,8 +202,18 @@ class PembayaranController extends BaseController
     {
         error_log("start send notification wa");
         try {
+            
+            $text = "*Pembayaran Masuk* \n".
+            "Nama Pelanggan: ".$notifData['nama_pelanggan']."\n".
+            "Pesanan atau Penyewaan: ".$notifData['pesanan_atau_penyewaan']."\n".
+            "Jadwal: ".$notifData['jadwal_pesanan_atau_penyewaan']."\n".
+            "Tanggal Pembayaran: ".$notifData['tanggal_pembayaran']."\n".
+            "Metode Pembayaran: ".$notifData['metode_pembayaran'];
+            sendTelegramText($text);
+
             $base64 = $notifData['bukti_pembayaran'];
-            // Ekstrak base64
+            if(!empty($base64)){
+                // Ekstrak base64
             $data = base64_decode($base64);
             $finfo = new finfo(FILEINFO_MIME_TYPE);
             $mimeType = $finfo->buffer($data);
@@ -220,15 +234,8 @@ class PembayaranController extends BaseController
             error_log("filepath : ".$filepath);
             file_put_contents($filepath, $data);
 
-            // Kirim notifikasi
             sendTelegramPhotoFile($filepath, "Bukti Pembayaran");
-            $text = "*Pembayaran Masuk* \n".
-            "Nama Pelanggan: ".$notifData['nama_pelanggan']."\n".
-            "Pesanan atau Penyewaan: ".$notifData['pesanan_atau_penyewaan']."\n".
-            "Jadwal: ".$notifData['jadwal_pesanan_atau_penyewaan']."\n".
-            "Tanggal Pembayaran: ".$notifData['tanggal_pembayaran']."\n".
-            "Metode Pembayaran: ".$notifData['metode_pembayaran'];
-            sendTelegramText($text);
+            }
         } catch (\Throwable $th) {
             //throw $th;
             error_log("error when send notification wa".$th);

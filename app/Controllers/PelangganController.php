@@ -16,9 +16,19 @@ class PelangganController extends BaseController
         // $userRole = $role[Constants::ROLE_USER];
 
         $pelanggnModel = new PelangganModel();
-        $pelanggan = $pelanggnModel->where('is_deleted', '0')->findAll();
+        $userRole = getCacheHashMap(Constants::ROLE_KEY_HASHMAP, Constants::ROLE_USER);
+        $userId = session()->get('user_id');
+        $pelanggan = cache()->get(Constants::PELANGGAN_KEY.$userId);
+        $dataPelanggan = [];
+        if(session()->get('role') == $userRole['id_role']){
+            $dataPelanggan = $pelanggnModel->where('is_deleted', '0')->where('id_pelanggan', $pelanggan['id_pelanggan'])->findAll();
+
+        } else {
+            $dataPelanggan = $pelanggnModel->where('is_deleted', '0')->findAll();
+        }
         $data = [
-            'pelanggans' => $pelanggan,
+            'pelanggans' => $dataPelanggan,
+            'rola_name' => session()->get('role_name'),
         ];
         return view('pages/pelanggan', $data);
     }

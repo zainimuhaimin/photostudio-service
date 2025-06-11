@@ -82,7 +82,6 @@ Receipt
                     <div class="client-details">
                       <strong>Kepada:</strong><br/>
                       Bapak/Ibu <?=null == $pembayaran->nama_pelanggan_sewa_alat ? $pembayaran->nama_pelanggan_pemesan_jasa : $pembayaran->nama_pelanggan_sewa_alat ?><br/>
-                      PT. Contoh Pelanggan<br/>
                       Email: <?=null == $pembayaran->email_sewa_alat ? $pembayaran->email_pesan_jasa : $pembayaran->email_sewa_alat ?>
                     </div>
 
