@@ -22,8 +22,10 @@ Table Pelanggan
             <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
             <div class="space-x-4 justify-between flex p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                 <h6 class="dark:text-white">Tabel Pelanggan</h6>
+                <?php if ($rola_name == "ADMIN"):?>
                 <a class="dark:text-white bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" href="<?=base_url()?>pelanggan-add">
                   Tambah Pelanggan </a>
+                <?php endIf;?>
             </div>
             <div class="flex-auto px-0 pt-0 pb-2">
                 <div class="p-2 overflow-x-auto">
