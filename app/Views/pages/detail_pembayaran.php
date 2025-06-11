@@ -28,8 +28,8 @@ Detail Pembayaran
                   <form enctype="multipart/form-data" role="form text-left" action="<?=base_url()?>pembayaran-update" method="POST">
                     <input type="hidden" name="id_pembayaran" value="<?=$pembayaran->id_pembayaran?>">
                     <div class="mb-4">
-                      <label for="pemessan">Nama Pemesan</label>
-                      <input id="pemesan" readonly value="<?=$pembayaran->nama?>" id="hargasewa" autocomplete="off" type="int" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" aria-label="hargasewa" aria-describedby="email-addon" />
+                      <label for="pemesan">Nama Pemesan</label>
+                      <input id="pemesan" readonly value="<?=$pembayaran->nama_pelanggan_sewa_alat == null ? $pembayaran->nama_pelanggan_pemesanan_jasa : $pembayaran->nama_pelanggan_sewa_alat?>" id="hargasewa" autocomplete="off" type="int" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" aria-label="hargasewa" aria-describedby="email-addon" />
                     </div>
                     <div class="mb-4">
                       <label for="jasa">Jenis Pembayaran Untuk</label>
@@ -55,6 +55,10 @@ Detail Pembayaran
                           <option value="TRANSFER" <?= $pembayaran->metode_pembayaran == 'TRANSFER' ? 'selected': '' ?>>TRANSFER</option>
                           <option value="CASH" <?= $pembayaran->metode_pembayaran == 'CASH' ? 'selected': '' ?>>CASH</option>
                       </select>
+                    </div>
+                    <div class="mb4">
+                      <p>Silahkan lakukan pembayaran sesuai dengan metode pembayaran yang di pilih, 
+                        simpan bukti pembayaran dan upload di form ini lalu tunjukan bukti bayar kepada pegawai untuk di validasi sekali lagi!. terima kasih</p>
                     </div>
                     <?php if($pembayaran->status_pembayaran == "BOOKED"): ?>
                     <div class="text-center">

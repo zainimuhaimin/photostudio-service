@@ -37,3 +37,4 @@ $routes->post('/pemesanan-save', 'PemesananJasaController::save', ['filter' => '
 $routes->get('/pembayaran-table', 'PembayaranController::index', ['filter' => 'auth']);
 $routes->get('/pembayaran-detail/(:num)', 'PembayaranController::detail/$1', ['filter' => 'auth']);
 $routes->post('/pembayaran-update', 'PembayaranController::update', ['filter' => 'auth']);
+$routes->get('/pembayaran-receipt/(:num)', 'PembayaranController::invoice/$1', ['filter' => 'auth']);

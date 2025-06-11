@@ -88,5 +88,5 @@ class Autoload extends AutoloadConfig
      *
      * @var list<string>
      */
-    public $helpers = ['cache', 'datetime'];
+    public $helpers = ['cache', 'datetime', 'telegramnotif'];
 }

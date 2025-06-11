@@ -61,7 +61,7 @@ Table Pembayaran
                         <?php if(session()->get('role') == $roleUser['id_role']): ?>
                         <td class="p-2 align-middle bg-transparent dark:border-white/40 whitespace-nowrap shadow-transparent">
                           <?php if($val['status_pembayaran'] == 'PAID'): ?>
-                          <p>Lunas</p>
+                          <a href="<?=base_url()?>pembayaran-receipt/<?=$val['id_pembayaran']?>" class="dark:text-white bg-green-500 hover:bg-green-700 text-black py-1 px-1 rounded">Lunas</a>
                           <?php else:?>
                           <a href="<?=base_url()?>pembayaran-detail/<?=$val['id_pembayaran']?>" class="dark:text-white bg-blue-500 hover:bg-blue-700 text-white py-1 px-1 rounded">Bayar</a>
                           <?php endif;?>
