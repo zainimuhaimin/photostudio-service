@@ -127,7 +127,6 @@ class PembayaranController extends BaseController
                 'bukti_pembayaran' => $base64,
             ];
             $pembayaranModel->update($idPembayaran, $dataPembayaran);
-            
             db_connect()->transComplete();
             return redirect()->to('/pembayaran-receipt/'.$idPembayaran)->with('success', 'Pembayaran berhasil diupdate');
         } catch (\Throwable $th) {
@@ -137,6 +136,7 @@ class PembayaranController extends BaseController
             throw $th;
         } finally {
             $dataPembayaran = $pembayaranModel->getPembayaranByIdPembayaran($idPembayaran);
+            error_log("data notif pembayaran : ".json_encode($dataPembayaran));
             $notif = [
                 'metode_pembayaran' => $this->request->getPost('pembayaran-metode'),
                 'status_pembayaran' => StatusPembayaranEnum::PAID->value,
@@ -144,8 +144,9 @@ class PembayaranController extends BaseController
                 'tanggal_pembayaran' => date('Y-m-d H:i:s'),
                 'bukti_pembayaran' => $base64,
                 'phone_number' => $pelanggan['no_telp'],
-                'pesanan_atau_penyewaan' => $dataPembayaran->nama_jasa == null ? $dataPembayaran->nama_alat : $dataPembayaran->nama_jasa,
+                'pesanan_atau_penyewaan' => $dataPembayaran->nama_jasa == null ? "[SEWA] ". $dataPembayaran->nama_alat : "[JASA] ". $dataPembayaran->nama_jasa,
                 'jadwal_pesanan_atau_penyewaan' => $dataPembayaran->tanggal_penyewaan == null? $dataPembayaran->tanggal_pemesanan_jasa : $dataPembayaran->tanggal_penyewaan,
+                'transaction_id' => $dataPembayaran->transaction_id,
             ];
             $this->sendNotif($notif);
         }
@@ -205,6 +206,7 @@ class PembayaranController extends BaseController
             
             $text = "*Pembayaran Masuk* \n".
             "Nama Pelanggan: ".$notifData['nama_pelanggan']."\n".
+            "Transaksi ID : ".$notifData['transaction_id']."\n".
             "Pesanan atau Penyewaan: ".$notifData['pesanan_atau_penyewaan']."\n".
             "Jadwal: ".$notifData['jadwal_pesanan_atau_penyewaan']."\n".
             "Tanggal Pembayaran: ".$notifData['tanggal_pembayaran']."\n".

@@ -60,4 +60,19 @@ class PemesananJasaModel extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+
+    public function getBookedPemesananJasa($startDate, $endDate, $idJasa){
+        error_log("start get booked pemesanan jasa");
+        error_log("id jasa : ".$idJasa);
+        $startDate = $startDate->format('Y-m-d');
+        $endDate = $endDate->format('Y-m-d');
+        $builder = $this->db->table('table_pemensanan_jasa');
+        $builder->select('table_pemensanan_jasa.*');
+        $builder->where('table_pemensanan_jasa.id_jasa', $idJasa);
+        $builder->where('table_pemensanan_jasa.is_deleted', 0);
+        $builder->where('table_pemensanan_jasa.tanggal >=', $startDate);
+        $builder->where('table_pemensanan_jasa.tanggal <= ', $endDate);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
 }
