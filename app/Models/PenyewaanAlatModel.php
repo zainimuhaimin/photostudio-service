@@ -45,7 +45,7 @@ class PenyewaanAlatModel extends Model
 
     public function getTransaksiSewaJoinPembayaranByIdPelanggan($id_pelanggan){
         $builder = $this->db->table('table_penyewaan_alat');
-        $builder->select('table_penyewaan_alat.*, table_pembayaran.*, table_alat.*');
+        $builder->select('table_penyewaan_alat.*, table_pembayaran.status_pembayaran, table_alat.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_penyewaan = table_penyewaan_alat.id_penyewaan');
         $builder->join('table_alat', 'table_alat.id_alat = table_penyewaan_alat.id_alat');
         $builder->where('table_penyewaan_alat.id_pelanggan', $id_pelanggan);
@@ -55,7 +55,7 @@ class PenyewaanAlatModel extends Model
 
     public function getTransaksiSewaJoinPembayaran(){
         $builder = $this->db->table('table_penyewaan_alat');
-        $builder->select('table_penyewaan_alat.*, table_pembayaran.*, table_alat.*');
+        $builder->select('table_penyewaan_alat.*, table_pembayaran.status_pembayaran, table_alat.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_penyewaan = table_penyewaan_alat.id_penyewaan');
         $builder->join('table_alat', 'table_alat.id_alat = table_penyewaan_alat.id_alat');
         $query = $builder->get();
