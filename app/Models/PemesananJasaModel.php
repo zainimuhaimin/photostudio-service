@@ -44,7 +44,7 @@ class PemesananJasaModel extends Model
 
     public function getTransaksiPemesananJasaJoinPembayaranByIdPelanggan($id_pelanggan){
         $builder = $this->db->table('table_pemensanan_jasa');
-        $builder->select('table_pemensanan_jasa.*, table_pembayaran.*, table_jasa.*');
+        $builder->select('table_pemensanan_jasa.*, table_pembayaran.status_pembayaran, table_jasa.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_pemensanan = table_pemensanan_jasa.id_pemensanan');
         $builder->join('table_jasa', 'table_jasa.id_jasa = table_pemensanan_jasa.id_jasa');
         $builder->where('table_pemensanan_jasa.id_pelanggan', $id_pelanggan);
@@ -54,7 +54,7 @@ class PemesananJasaModel extends Model
 
     public function getTransaksiPemesananJasaJoinPembayaran(){
         $builder = $this->db->table('table_pemensanan_jasa');
-        $builder->select('table_pemensanan_jasa.*, table_pembayaran.*, table_jasa.*');
+        $builder->select('table_pemensanan_jasa.*, table_pembayaran.status_pembayaran, table_jasa.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_pemensanan = table_pemensanan_jasa.id_pemensanan');
         $builder->join('table_jasa', 'table_jasa.id_jasa = table_pemensanan_jasa.id_jasa');
         $query = $builder->get();
