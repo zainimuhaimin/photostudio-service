@@ -29,10 +29,12 @@ $routes->post('/jasa-save', 'JasaController::save', ['filter' => 'auth']);
 $routes->get('/penyewaan-table', 'PenyewaanAlatController::index', ['filter' => 'auth']);
 $routes->get('/penyewaan-add', 'PenyewaanAlatController::add', ['filter' => 'auth']);
 $routes->post('/penyewaan-save', 'PenyewaanAlatController::save', ['filter' => 'auth']);
+$routes->post('/penyewaan/get-jadwal', 'PenyewaanAlatController::getJadwal', ['filter' => 'auth']);
 
 $routes->get('/pemesanan-table', 'PemesananJasaController::index', ['filter' => 'auth']);
 $routes->get('/pemesanan-add', 'PemesananJasaController::add', ['filter' => 'auth']);
 $routes->post('/pemesanan-save', 'PemesananJasaController::save', ['filter' => 'auth']);
+$routes->post('/pemesanan/get-jadwal', 'PemesananJasaController::getJadwal', ['filter' => 'auth']);
 
 $routes->get('/pembayaran-table', 'PembayaranController::index', ['filter' => 'auth']);
 $routes->get('/pembayaran-detail/(:num)', 'PembayaranController::detail/$1', ['filter' => 'auth']);

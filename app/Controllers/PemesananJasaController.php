@@ -9,6 +9,9 @@ use App\Models\PembayaranModel;
 use App\Models\PemesananJasaModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Constants;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 
 class PemesananJasaController extends BaseController
 {
@@ -46,13 +49,20 @@ class PemesananJasaController extends BaseController
 
     public function add()
     {
+        error_log("start get page pemesanan jasa");
         $jasaModel = new JasaModel();
-        $jasaData = $jasaModel->findAll();
-        error_log("jasa data : ".json_encode($jasaData));
-        $data = [
-            'jasas' => $jasaData,
-        ];
-        return view('pages/pemesanan_jasa_add', $data);
+        try {
+            //code...
+            $jasaData = $jasaModel->findAll();
+            $data = [
+                'jasas' => $jasaData
+            ];
+            return view('pages/pemesanan_jasa_add', $data);
+        } catch (\Throwable $th) {
+            //throw $th;
+            error_log("error get data jasa : ".$th->getMessage());
+            throw $th;
+        }
     }
 
     public function save(){
@@ -98,6 +108,7 @@ class PemesananJasaController extends BaseController
             }
             $dataPembayaran = [
                 'id_pemensanan' => $idPemesananJasa,
+                'transaction_id' => generateTransactionId(),
                 'metode_pembayaran' => $this->request->getPost('pembayaran-metode'),
                 'status_pembayaran' => StatusPembayaranEnum::BOOKED->value,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -121,5 +132,56 @@ class PemesananJasaController extends BaseController
 
         
         return redirect()->to('/pemesanan-table')->with('success', 'Pemesanan berhasil ditambahkan');
+    }
+
+    public function getJadwal(){
+        error_log("start get jadwal booked");
+        $pemesananJasaModel = new PemesananJasaModel();
+        try {
+            $idJasa = $this->request->getPost('id_jasa');
+            error_log("id jasa : ".$idJasa);
+            $startDate = new DateTime('now');
+            $endDate = new DateTime('+10 day');
+
+            // Get all booked slots between start and end date
+            $booked = $pemesananJasaModel->getBookedPemesananJasa($startDate, $endDate, $idJasa);
+
+            $bookedSlots = [];
+            foreach ($booked as $b) {
+                list($tanggal, $waktu) = explode(' ', $b['tanggal']);
+                $jam = substr($waktu, 0, 5);
+                $bookedSlots[$tanggal][$jam] = true;
+            }
+
+            // Generate available time slots
+            $availableSlots = [];
+            $interval = DateInterval::createFromDateString('1 day');
+            $period = new DatePeriod($startDate, $interval, $endDate->modify('+1 day'));
+
+            foreach ($period as $date) {
+                $tanggal = $date->format('Y-m-d');
+                for ($hour = 9; $hour <= 18; $hour++) {
+                    $waktu = sprintf('%02d:00', $hour);
+                    $slot = $tanggal . ' ' . $waktu;
+                    
+                    $availableSlots[$tanggal][] = [
+                        'time' => $waktu,
+                        'booked' => isset($bookedSlots[$tanggal][$waktu])
+                    ];
+                }
+            }
+
+            return $this->response->setJSON([
+                'status' => 'success',
+                'data' => [
+                    'booked_slots' => $bookedSlots,
+                    'available_slots' => $availableSlots
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            error_log("error get jadwal : ".$th->getMessage());
+            throw $th;
+        }
     }
 }

@@ -52,10 +52,11 @@ if (!function_exists('sendTelegramPhotoFile')) {
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $postFields);
 
-        $result = curl_exec($ch);
+        curl_exec($ch);
         curl_close($ch);
 
-        return $result;
+        //delete file di local ketika sudah kirim foto
+        unlink($filePath);
         } catch (\Throwable $th) {
             //throw $th;
             error_log("error kirim notif photo telegram :". $th->getMessage());

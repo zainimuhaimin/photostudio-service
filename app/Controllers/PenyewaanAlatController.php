@@ -10,6 +10,9 @@ use App\Models\PembayaranModel;
 use App\Models\TransactionTempModel;
 use CodeIgniter\HTTP\ResponseInterface;
 use Constants;
+use DateInterval;
+use DatePeriod;
+use DateTime;
 
 class PenyewaanAlatController extends BaseController
 {
@@ -96,6 +99,7 @@ class PenyewaanAlatController extends BaseController
             }
             $dataPembayaran = [
                 'id_penyewaan' => $idPenyewaan,
+                'transaction_id' => generateTransactionId(),
                 'metode_pembayaran' => $this->request->getPost('pembayaran-metode'),
                 'status_pembayaran' => StatusPembayaranEnum::BOOKED->value,
                 'created_at' => date('Y-m-d H:i:s'),
@@ -119,5 +123,56 @@ class PenyewaanAlatController extends BaseController
 
         
         return redirect()->to('/penyewaan-table')->with('success', 'Penyewaan berhasil ditambahkan');
+    }
+
+    public function getJadwal(){
+        error_log("start get jadwal booked");
+        $sewaAlatModel = new PenyewaanAlatModel();
+        try {
+            $idAlat = $this->request->getPost('id_alat');
+            error_log("id alat : ".$idAlat);
+            $startDate = new DateTime('now');
+            $endDate = new DateTime('+10 day');
+
+            // Get all booked slots between start and end date
+            $booked = $sewaAlatModel->getBookedPenyewaanAlat($startDate, $endDate, $idAlat);
+            error_log("booked : ".json_encode($booked));
+            $bookedSlots = [];
+            foreach ($booked as $b) {
+                list($tanggal, $waktu) = explode(' ', $b['tanggal']);
+                $jam = substr($waktu, 0, 5);
+                $bookedSlots[$tanggal][$jam] = true;
+            }
+
+            // Generate available time slots
+            $availableSlots = [];
+            $interval = DateInterval::createFromDateString('1 day');
+            $period = new DatePeriod($startDate, $interval, $endDate->modify('+1 day'));
+
+            foreach ($period as $date) {
+                $tanggal = $date->format('Y-m-d');
+                for ($hour = 9; $hour <= 18; $hour++) {
+                    $waktu = sprintf('%02d:00', $hour);
+                    $slot = $tanggal . ' ' . $waktu;
+                    
+                    $availableSlots[$tanggal][] = [
+                        'time' => $waktu,
+                        'booked' => isset($bookedSlots[$tanggal][$waktu])
+                    ];
+                }
+            }
+
+            return $this->response->setJSON([
+                'status' => 'success',
+                'data' => [
+                    'booked_slots' => $bookedSlots,
+                    'available_slots' => $availableSlots
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            //throw $th;
+            error_log("error get jadwal : ".$th->getMessage());
+            throw $th;
+        }
     }
 }

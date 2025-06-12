@@ -12,7 +12,7 @@ class PembayaranModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['id_penyewaan', 'id_pemensanan', 'metode_pembayaran', 'tanggal_pembayaran', 'bukti_pembayaran', 'status_pembayaran', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_deleted'];
+    protected $allowedFields    = ['id_penyewaan', 'id_pemensanan', 'metode_pembayaran', 'tanggal_pembayaran', 'bukti_pembayaran', 'status_pembayaran', 'created_at', 'created_by', 'updated_at', 'updated_by', 'is_deleted', 'transaction_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -127,7 +127,7 @@ class PembayaranModel extends Model
     {
         error_log("ID Pembayaran: $idPembayaran");
         $builder = $this->db->table('table_pembayaran tp');
-        $builder->select('tp.id_pembayaran as id_pembayaran, tp.metode_pembayaran as metode_pembayaran , tp.status_pembayaran as status_pembayaran, tpa.*, ta.*, tpj.*, tj.*, tp2.*, tp3.*, tp2.nama as nama_pelanggan_sewa_alat, tp3.nama as nama_pelanggan_pemesan_jasa, tpa.tanggal as tanggal_penyewaan, tpj.tanggal as tanggal_pemesanan_jasa');
+        $builder->select('tp.transaction_id as transaction_id , tp.id_pembayaran as id_pembayaran, tp.metode_pembayaran as metode_pembayaran , tp.status_pembayaran as status_pembayaran, tpa.*, ta.*, tpj.*, tj.*, tp2.*, tp3.*, tp2.nama as nama_pelanggan_sewa_alat, tp3.nama as nama_pelanggan_pemesan_jasa, tpa.tanggal as tanggal_penyewaan, tpj.tanggal as tanggal_pemesanan_jasa');
 
         $builder->join('table_penyewaan_alat tpa', 'tp.id_penyewaan = tpa.id_penyewaan', 'left');
         $builder->join('table_alat ta', 'ta.id_alat = tpa.id_alat', 'left');

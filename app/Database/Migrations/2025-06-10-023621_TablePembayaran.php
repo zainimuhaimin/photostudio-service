@@ -26,6 +26,10 @@ class TablePembayaran extends Migration
                 'constraint'     => 11,
                 'null'           => true,
             ],
+            'transaction_id' => [
+                'type'           => 'VARCHAR',
+                'constraint'     => '200',
+            ],
             'metode_pembayaran' => [
                 'type'           => 'VARCHAR',
                 'constraint'     => '100',

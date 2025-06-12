@@ -74,4 +74,19 @@ class PenyewaanAlatModel extends Model
         $query = $builder->get();
         return $query->getResultArray();
     }
+
+    public function getBookedPenyewaanAlat($startDate, $endDate, $idAlat){
+        error_log("start get booked pemesanan jasa");
+        error_log("id alat : ".$idAlat);
+        $startDate = $startDate->format('Y-m-d');
+        $endDate = $endDate->format('Y-m-d');
+        $builder = $this->db->table('table_penyewaan_alat');
+        $builder->select('table_penyewaan_alat.*');
+        $builder->where('table_penyewaan_alat.id_alat', $idAlat);
+        $builder->where('table_penyewaan_alat.is_deleted', 0);
+        $builder->where('table_penyewaan_alat.tanggal >=', $startDate);
+        $builder->where('table_penyewaan_alat.tanggal <= ', $endDate);
+        $query = $builder->get();
+        return $query->getResultArray();
+    }
 }

@@ -28,19 +28,19 @@ Form Pemesanan Jasa
                   <form role="form text-left" action="<?=base_url()?>pemesanan-save" method="POST">
                     <div class="mb-4">
                       <label for="jasa" class="block text-sm font-medium text-gray-700 mb-1">Pilih Jasa</label>
-                       <select id="jasa" name="jasa" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                      <select id="jasa" name="jasa" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
                         <?php foreach ($jasas as $val):?>
                           <option value="<?=$val['id_jasa']?>" data-harga="<?=$val['harga_jasa']?>"><?=$val['nama_jasa']?></option>
                         <?php endforeach; ?>
                       </select>
                     </div>
                     <div class="mb-4">
-                          <label for="jadwal">Pilih Jadwal:</label>
-                    <input type="datetime-local" id="jadwal" name="jadwal" class="block appearance-none w-50 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" />
+                    <label for="jadwal">Pilih Jadwal :</label>
+                    <input placeholder="Pilih Jadwal" type="text" id="jadwal" name="jadwal" class="block appearance-none w-50 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div class="mb-4">
                       <label for="pembayaran-metode" class="block text-sm font-medium text-gray-700 mb-1">Metode Pembayaran</label>
-                       <select name="pembayaran-metode" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                      <select name="pembayaran-metode" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
                           <option value="TRANSFER">TRANSFER</option>
                           <option value="CASH">CASH</option>
                       </select>
@@ -59,6 +59,11 @@ Form Pemesanan Jasa
         </div>
 </div>
 <script>
+
+  const base_url = "<?=base_url()?>"
+  const select = document.getElementById('jasa');
+  const idJasa = select.options[select.selectedIndex].value;
+
   function updatePrice(){
     const select = document.getElementById('jasa');
     const selected = select.options[select.selectedIndex];
@@ -67,12 +72,18 @@ Form Pemesanan Jasa
     document.getElementById('hargasewalabel').value = harga ? `Rp ${parseInt(harga).toLocaleString('id-ID')}` : '';
     document.getElementById('hargasewa').value = harga ? harga : '';
   }
-  // Pasang event listener untuk saat select berubah
-  document.getElementById('jasa').addEventListener('change', updatePrice);
 
-  // Panggil sekali saat halaman dimuat untuk tampilkan harga default
-  window.onload = function () {
+  document.getElementById('jasa').addEventListener('change', function () {
+    const idJasa = this.value;
+    console.log("id jasa " + idJasa);
     updatePrice();
+    getJadwalPemesananJasa(base_url, idJasa);
+  })
+
+  window.onload = function () {
+    console.log("id jasa " + idJasa);
+    updatePrice();
+    getJadwalPemesananJasa(base_url, idJasa);
   };
 </script>
 <?= $this->endSection();?>

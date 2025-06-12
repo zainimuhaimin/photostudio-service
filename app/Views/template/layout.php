@@ -32,6 +32,14 @@
     <script src="https://unpkg.com/@popperjs/core@2"></script>
     <!-- Main Styling -->
     <link href="<?=base_url()?>/assets/css/argon-dashboard-tailwind.css?v=1.0.1" rel="stylesheet" />
+    
+    <!-- jquery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- date picker custom flatpicker -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
   </head>
 
   <body class="m-0 font-sans text-base antialiased font-normal dark:bg-slate-900 leading-default bg-gray-50 text-slate-500">
@@ -207,4 +215,5 @@
   <script src="<?=base_url()?>/assets/js/plugins/perfect-scrollbar.min.js" async></script>
   <!-- main script file  -->
   <script src="<?=base_url()?>/assets/js/argon-dashboard-tailwind.js?v=1.0.1" async></script>
+  <script src="<?=base_url()?>/assets/js/base.js" async></script>
 </html>

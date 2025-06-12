@@ -59,6 +59,10 @@ Form Penyewaan Alat
         </div>
 </div>
 <script>
+  const base_url = "<?=base_url()?>"
+  const select = document.getElementById('alat');
+  const idAlat = select.options[select.selectedIndex].value;
+
   function updatePrice(){
     const select = document.getElementById('alat');
     const selected = select.options[select.selectedIndex];
@@ -67,12 +71,18 @@ Form Penyewaan Alat
     document.getElementById('hargasewalabel').value = harga ? `Rp ${parseInt(harga).toLocaleString('id-ID')}` : '';
     document.getElementById('hargasewa').value = harga ? harga : '';
   }
-  // Pasang event listener untuk saat select berubah
-  document.getElementById('alat').addEventListener('change', updatePrice);
+
+  document.getElementById('alat').addEventListener('change', function () {
+    const idAlat = this.value;
+    console.log("id jasa " + idAlat);
+    updatePrice();
+    getJadwalPenyewaanAlat(base_url, idAlat);
+  })
 
   // Panggil sekali saat halaman dimuat untuk tampilkan harga default
   window.onload = function () {
     updatePrice();
+    getJadwalPenyewaanAlat(base_url, idAlat);
   };
 </script>
 <?= $this->endSection();?>

@@ -23,8 +23,11 @@ Detail Pembayaran
             <div class="space-x-4 justify-between flex p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                 <h6 class="dark:text-white">Detail Pembayaran</h6>
             </div>
+            
             <div class="flex-auto px-0 pt-0 pb-2">
                 <div class="p-4 overflow-x-auto">
+                  <div class="mb-4"><p>* Silahkan lakukan pembayaran sesuai dengan metode pembayaran yang di pilih,
+                        simpan bukti pembayaran dan upload di form ini lalu tunjukan bukti bayar kepada pegawai untuk di validasi sekali lagi!. terima kasih</p></div>
                   <form enctype="multipart/form-data" role="form text-left" action="<?=base_url()?>pembayaran-update" method="POST">
                     <input type="hidden" name="id_pembayaran" value="<?=$pembayaran->id_pembayaran?>">
                     <div class="mb-4">
@@ -41,7 +44,7 @@ Detail Pembayaran
                       <input type="hidden" id="hargasewa" readonly value="<?=null == $pembayaran->harga_jasa ? $pembayaran->harga_alat : $pembayaran->harga_jasa ?>" id="hargasewa" autocomplete="off" type="int" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="<?=null == $pembayaran->harga_jasa ? $pembayaran->harga_alat : $pembayaran->harga_jasa ?>" aria-label="hargasewa" aria-describedby="email-addon" />
                     </div>
                     <div class="mb-4">
-                      <label for="jadwal">Pilih Jadwal:</label>
+                      <label for="jadwal">Jadwal:</label>
                       <input readonly value="<?=null == $pembayaran->tanggal_penyewaan ? $pembayaran->tanggal_pemesanan_jasa : $pembayaran->tanggal_penyewaan ?>" type="datetime-local" id="jadwal" name="jadwal" class="block appearance-none w-50 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div class="mb-4">
@@ -55,10 +58,6 @@ Detail Pembayaran
                           <option value="TRANSFER" <?= $pembayaran->metode_pembayaran == 'TRANSFER' ? 'selected': '' ?>>TRANSFER</option>
                           <option value="CASH" <?= $pembayaran->metode_pembayaran == 'CASH' ? 'selected': '' ?>>CASH</option>
                       </select>
-                    </div>
-                    <div class="mb4">
-                      <p>Silahkan lakukan pembayaran sesuai dengan metode pembayaran yang di pilih, 
-                        simpan bukti pembayaran dan upload di form ini lalu tunjukan bukti bayar kepada pegawai untuk di validasi sekali lagi!. terima kasih</p>
                     </div>
                     <?php if($pembayaran->status_pembayaran == "BOOKED"): ?>
                     <div class="text-center">
