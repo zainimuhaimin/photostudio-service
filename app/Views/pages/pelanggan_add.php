@@ -27,23 +27,28 @@ Form Tambah Pelanggan
                 <div class="p-6 overflow-x-auto">
                   <form role="form text-left" action="<?=base_url()?>pelanggan-save" method="POST">
                     <div class="mb-4">
+                      <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Username</label>
                       <input autocomplete="off" name = "username" required type="text" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Nama / Username" aria-label="Username" aria-describedby="email-addon" />
                     </div>
                     <div class="mb-4">
-                      <input autocomplete="off" name="email" required type="email" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Email" aria-label="Email" aria-describedby="email-addon" />
-                    </div>
-                    <div class="mb-4">
-                      <input autocomplete="off" name="phoneNumber" required type="number" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Nomor Telephone" aria-label="Nomor Telephone" aria-describedby="email-addon" />
-                    </div>
-                    <div class="mb-4">
-                      <input autocomplete="off" name="alamat" required type="text" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Alamat" aria-label="Alamat" aria-describedby="email-addon" />
-                    </div>
-                    <div class="mb-4">
+                      <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Password</label>
                       <input autocomplete="off" name="password" required type="password" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Password" aria-label="Password" aria-describedby="password-addon" />
                     </div>
                     <div class="mb-4">
+                    <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Email</label>
+                      <input autocomplete="off" name="email" required type="email" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Email" aria-label="Email" aria-describedby="email-addon" />
+                    </div>
+                    <div class="mb-4">
+                      <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Nomor HandPhone</label>
+                      <input autocomplete="off" name="phoneNumber" required type="number" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Nomor Telephone" aria-label="Nomor Telephone" aria-describedby="email-addon" />
+                    </div>
+                    <div class="mb-4">
+                      <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Alamat</label>
+                      <input autocomplete="off" name="alamat" required type="text" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Alamat" aria-label="Alamat" aria-describedby="email-addon" />
+                    </div>
+                    <div class="mb-4">
                       <label for="role" class="block text-sm font-medium text-gray-700 mb-1">Pilih Role</label>
-                       <select name="role" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                        <select name="role" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
                         <?php foreach ($roles as $val):?>
                           <option value="<?=$val['id_role']?>"><?=$val['value']?></option>
                         <?php endforeach; ?>

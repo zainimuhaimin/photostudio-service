@@ -17,10 +17,14 @@ $routes->get('/logout', 'LoginController::logout', ['filter' => 'auth']);
 $routes->get('/pelanggan-table', 'PelangganController::index', ['filter' => 'auth']);
 $routes->get('/pelanggan-add', 'PelangganController::add', ['filter' => 'auth']);
 $routes->post('/pelanggan-save', 'PelangganController::save', ['filter' => 'auth']);
+$routes->delete('/pelanggan-delete/(:num)', 'PelangganController::delete/$1', ['filter' => 'auth']);
+$routes->get('/pelanggan-edit/(:num)', 'PelangganController::edit/$1', ['filter' => 'auth']);
+$routes->post('/pelanggan-update', 'PelangganController::update', ['filter' => 'auth']);
 
 $routes->get('/alat-table', 'AlatController::index', ['filter' => 'auth']);
 $routes->get('/alat-add', 'AlatController::add', ['filter' => 'auth']);
 $routes->post('/alat-save', 'AlatController::save', ['filter' => 'auth']);
+$routes->get('/alat/get-image/(:num)', 'AlatController::getImage/$1', ['filter' => 'auth']);
 
 $routes->get('/jasa-table', 'JasaController::index', ['filter' => 'auth']);
 $routes->get('/jasa-add', 'JasaController::add', ['filter' => 'auth']);

@@ -78,4 +78,69 @@ class PelangganController extends BaseController
         }
         return redirect()->to('/pelanggan-table')->with('success', 'Pelanggan berhasil ditambahkan');;
     }
+
+    public function delete($id)
+    {
+        $pelangganModel = new PelangganModel();
+        
+        try {
+            $data = [
+                'is_deleted' => '1',
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session('username')
+            ];
+
+            $pelangganModel->update($id, $data);
+
+            return $this->response->setJSON([
+                'status' => 200,
+                'message' => 'Customer deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            return $this->response->setJSON([
+                'status' => 500,
+                'message' => 'Failed to delete customer: ' . $e->getMessage()
+            ])->setStatusCode(500);
+        }
+    }
+
+    public function edit($id)
+    {
+        $pelangganModel = new PelangganModel();
+        try {
+            //code...
+            $dataPelanggan = $pelangganModel->where('id_pelanggan', $id)->first();
+            $data = [
+                'pelanggan' => $dataPelanggan
+            ];
+            return view('pages/pelanggan_edit', $data);
+        } catch (\Throwable $th) {
+            //throw $th;
+            error_log("error when get page edit pelanggan : ". $th->getMessage());
+            throw $th;
+        }
+    }
+
+public function update()
+{
+    $pelangganModel = new PelangganModel();
+    
+    try {
+        $id = $this->request->getPost('id');
+        $data = [
+            'email' => $this->request->getPost('email'), 
+            'no_telp' => $this->request->getPost('phoneNumber'),
+            'alamat' => $this->request->getPost('alamat'),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'updated_by' => session('username')
+        ];
+
+        $pelangganModel->update($id, $data);
+
+        return redirect()->to('/pelanggan-table')->with('success', 'Customer updated successfully');
+        
+    } catch (\Exception $e) {
+        return redirect()->back()->with('error', 'Failed to update customer: ' . $e->getMessage());
+    }
+}
 }

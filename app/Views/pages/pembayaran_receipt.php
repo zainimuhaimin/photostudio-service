@@ -74,9 +74,9 @@ Receipt
                     
                     <div class="company-details">
                       <strong>CV Rahma Grafika</strong><br/>
-                      Lorem ipsum dolor sit amet.<br/>
-                      Lorem ipsum dolor sit amet.<br/>
-                      Email: cvrahma@grafika.com
+                      Jl. Camar 3 No.32 A 32 A, Semper Bar.<br/>
+                      Kec. Cilincing, Jkt Utara, Daerah Khusus Ibukota Jakarta 14130. <br/>
+                      No Telp: (021) 4407511
                     </div>
 
                     <div class="client-details">

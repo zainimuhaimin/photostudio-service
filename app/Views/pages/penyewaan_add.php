@@ -23,8 +23,8 @@ Form Penyewaan Alat
             <div class="space-x-4 justify-between flex p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
                 <h6 class="dark:text-white">Penyewaan Alat</h6>
             </div>
-            <div class="flex-auto px-0 pt-0 pb-2">
-                <div class="p-6 overflow-x-auto">
+            <div class="flex px-0 pt-0 pb-2">
+                <div class="p-6 overflow-x-auto w-1/2">
                   <form role="form text-left" action="<?=base_url()?>penyewaan-save" method="POST">
                     <div class="mb-4">
                       <label for="alat" class="block text-sm font-medium text-gray-700 mb-1">Pilih Alat</label>
@@ -36,11 +36,11 @@ Form Penyewaan Alat
                     </div>
                     <div class="mb-4">
                           <label for="jadwal">Pilih Jadwal:</label>
-                    <input type="datetime-local" id="jadwal" name="jadwal" class="block appearance-none w-50 bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" />
+                    <input placeholder="Select date ..." type="text" id="jadwal" name="jadwal" class="block appearance-none bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" />
                     </div>
                     <div class="mb-4">
                       <label for="pembayaran-metode" class="block text-sm font-medium text-gray-700 mb-1">Metode Pembayaran</label>
-                       <select name="pembayaran-metode" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
+                        <select name="pembayaran-metode" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline">
                           <option value="TRANSFER">TRANSFER</option>
                           <option value="CASH">CASH</option>
                       </select>
@@ -53,6 +53,11 @@ Form Penyewaan Alat
                       <button type="submit" class="inline-block w-full px-5 py-2.5 mt-6 mb-2 font-bold text-center text-white align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer active:opacity-85 hover:-translate-y-px hover:shadow-xs leading-normal text-sm ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 bg-gradient-to-tl from-zinc-800 to-zinc-700 hover:border-slate-700 hover:bg-slate-700 hover:text-white">Tambah</button>
                     </div>
                   </form>
+                </div>
+                <div class="p-6 overflow-x-auto w-1/2 ">
+                  <div class="relative w-full rounded-lg overflow-hidden border-2 border-gray-300">
+                      <img id="alatImage" alt="Equipment Preview" class="w-full max-h-full mx-auto object-contain transition-all duration-300 ease-in-out" height="400px">
+                  </div>
                 </div>
             </div>
             </div>
@@ -72,17 +77,43 @@ Form Penyewaan Alat
     document.getElementById('hargasewa').value = harga ? harga : '';
   }
 
+  
+  function getAlatImage(baseUrl, idAlat) {
+    console.log("start get alat image id alat : "+idAlat)
+    $.ajax({
+      url: base_url + `/alat/get-image/${idAlat}`,
+      method: 'GET',
+      success: function(response) {
+        if (response.status === 'success') {
+          // Update the image source with base64 data
+          document.getElementById('alatImage').src = `${base_url}`+response.data.imagePath;
+          
+          // // Update equipment name and description
+          // document.getElementById('alatName').textContent = response.data.nama_alat;
+          // document.getElementById('alatDesc').textContent = response.data.deskripsi || 'No description available';
+        } else {
+          console.error('Failed to fetch equipment image');
+        }
+      },
+      error: function(xhr, status, error) {
+        console.error('Error fetching equipment image:', error);
+      }
+    });
+  }
+
   document.getElementById('alat').addEventListener('change', function () {
     const idAlat = this.value;
     console.log("id jasa " + idAlat);
     updatePrice();
     getJadwalPenyewaanAlat(base_url, idAlat);
-  })
+    getAlatImage(base_url, idAlat);
+  });
 
-  // Panggil sekali saat halaman dimuat untuk tampilkan harga default
+  
   window.onload = function () {
     updatePrice();
     getJadwalPenyewaanAlat(base_url, idAlat);
+    getAlatImage(base_url, idAlat);
   };
 </script>
 <?= $this->endSection();?>

@@ -177,28 +177,6 @@ class PembayaranController extends BaseController
         
     }
 
-    
-
-    public function sendText()
-    {
-        $client = \Config\Services::curlrequest();
-
-        $response = $client->request('POST', 'https://api.fonnte.com/send', [
-            'headers' => [
-                'Authorization' => $this->apiKey
-            ],
-            'form_params' => [
-                'target' => '6281234567890', // Nomor tujuan (gunakan kode negara, tanpa +)
-                'message' => 'Halo, ini pesan dari CodeIgniter 4 🎉',
-            ]
-        ]);
-
-        return $this->response->setJSON([
-            'status' => 'ok',
-            'response' => json_decode($response->getBody())
-        ]);
-    }
-
     public function sendNotif($notifData) : void
     {
         error_log("start send notification wa");
