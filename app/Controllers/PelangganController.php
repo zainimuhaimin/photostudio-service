@@ -81,9 +81,12 @@ class PelangganController extends BaseController
 
     public function delete($id)
     {
+        error_log("start delete pelanggan");
+        error_log("id : ". $id);
         $pelangganModel = new PelangganModel();
-        
+        $userAuthModel = new UserAuthenticationModel();
         try {
+            $pelanggan = $pelangganModel->find($id);
             $data = [
                 'is_deleted' => '1',
                 'updated_at' => date('Y-m-d H:i:s'),
@@ -91,6 +94,14 @@ class PelangganController extends BaseController
             ];
 
             $pelangganModel->update($id, $data);
+
+            $authData = [
+                'is_deleted' => '1',
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session('username')
+            ];
+
+            $userAuthModel->update($pelanggan['id_user'], $authData);
 
             return $this->response->setJSON([
                 'status' => 200,
