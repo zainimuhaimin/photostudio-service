@@ -17,6 +17,23 @@ Form Edit Penyewaan Alat
 <!-- end initiate -->
 
 <?= $this->section('content'); ?>
+<style>
+  .image-wrapper {
+    width: 500px;
+    /* misalnya fixed */
+    height: 500px;
+    /* fixed juga */
+    overflow: hidden;
+    position: relative;
+  }
+
+  .image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* ini penting: potong gambar biar pas */
+  }
+</style>
 <div class="flex flex-wrap -mx-2">
   <div class="flex-none w-full max-w-full px-3">
     <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
@@ -57,7 +74,7 @@ Form Edit Penyewaan Alat
           </form>
         </div>
         <div class="p-6 overflow-x-auto w-1/2 ">
-          <div class="relative w-full rounded-lg overflow-hidden border-2 border-gray-300">
+          <div class="image-wrapper relative w-full rounded-lg overflow-hidden border-2 border-gray-300">
             <img id="alatImage" alt="Equipment Preview" class="w-full max-h-full mx-auto object-contain transition-all duration-300 ease-in-out" height="400px">
           </div>
         </div>

@@ -5,4 +5,5 @@ enum StatusPembayaranEnum: string{
     case PAID = 'PAID';
     case UNPAID = 'UNPAID';
     case INVALID = 'INVALID';
+    case VALID = 'VALID';
 }

@@ -8,11 +8,15 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'LoginController::index', ['filter' => 'noAuth']);
 $routes->get('/register', 'RegistrationController::index', ['filter' => 'noAuth']);
 $routes->post('/registration/save', 'RegistrationController::save', ['filter' => 'noAuth']);
+
 $routes->get('/login', 'LoginController::index', ['filter' => 'noAuth']);
 $routes->post('/authenticate', 'LoginController::authenticate', ['filter' => 'noAuth']);
+$routes->get('/logout', 'LoginController::logout', ['filter' => 'auth']);
 
 $routes->get('/dashboard', 'DashboardController::index', ['filter' => 'auth']);
-$routes->get('/logout', 'LoginController::logout', ['filter' => 'auth']);
+$routes->get('/profile', 'DashboardController::profile', ['filter' => 'auth']);
+$routes->post('/profile-update', 'DashboardController::updateProfile', ['filter' => 'auth']);
+$routes->post('/profile-update-admin', 'DashboardController::updateProfileAdmin', ['filter' => 'auth']);
 
 $routes->get('/pelanggan-table', 'PelangganController::index', ['filter' => 'auth']);
 $routes->get('/pelanggan-add', 'PelangganController::add', ['filter' => 'auth']);
@@ -56,3 +60,4 @@ $routes->get('/pembayaran-table', 'PembayaranController::index', ['filter' => 'a
 $routes->get('/pembayaran-detail/(:num)', 'PembayaranController::detail/$1', ['filter' => 'auth']);
 $routes->post('/pembayaran-update', 'PembayaranController::update', ['filter' => 'auth']);
 $routes->get('/pembayaran-receipt/(:num)', 'PembayaranController::invoice/$1', ['filter' => 'auth']);
+$routes->post('/pembayaran-confirm', 'PembayaranController::confirm', ['filter' => 'auth']);
