@@ -33,6 +33,10 @@ $routes->post('/alat-update', 'AlatController::update', ['filter' => 'auth']);
 $routes->get('/jasa-table', 'JasaController::index', ['filter' => 'auth']);
 $routes->get('/jasa-add', 'JasaController::add', ['filter' => 'auth']);
 $routes->post('/jasa-save', 'JasaController::save', ['filter' => 'auth']);
+$routes->get('/jasa/pelanggan-get-transaction-data/(:num)', 'JasaController::getJasaByIdJoinTransaction/$1', ['filter' => 'auth']);
+$routes->delete('/jasa-delete/(:num)', 'JasaController::delete/$1', ['filter' => 'auth']);
+$routes->get('/jasa-edit/(:num)', 'JasaController::edit/$1', ['filter' => 'auth']);
+$routes->post('/jasa-update', 'JasaController::update', ['filter' => 'auth']);
 
 $routes->get('/penyewaan-table', 'PenyewaanAlatController::index', ['filter' => 'auth']);
 $routes->get('/penyewaan-add', 'PenyewaanAlatController::add', ['filter' => 'auth']);

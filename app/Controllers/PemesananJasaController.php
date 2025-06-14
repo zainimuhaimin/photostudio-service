@@ -21,24 +21,24 @@ class PemesananJasaController extends BaseController
         $pemesananJasaModel = new PemesananJasaModel();
         try {
             $cacheRole = getCacheHashMap(Constants::ROLE_KEY_HASHMAP, Constants::ROLE_USER);
-            error_log("cache role : ".json_encode($cacheRole));
+            error_log("cache role : " . json_encode($cacheRole));
             //validasi jika user rolenya USER maka ambil data current user
-            $result=[];
+            $result = [];
             if (session()->get('role') == $cacheRole['id_role']) {
                 $idUser = session()->get('user_id');
-                $cachePelanggan = getCache(Constants::PELANGGAN_KEY.$idUser);
-                error_log("cache pelanggan : ".json_encode($cachePelanggan));
+                $cachePelanggan = getCache(Constants::PELANGGAN_KEY . $idUser);
+                error_log("cache pelanggan : " . json_encode($cachePelanggan));
                 //role user ambil transaksi pemesanan yang current user saja
                 $result = $pemesananJasaModel->getTransaksiPemesananJasaJoinPembayaranByIdPelanggan($cachePelanggan['id_pelanggan']);
-                error_log("result : ".json_encode($result));
+                error_log("result : " . json_encode($result));
             } else {
                 //role admin ambil semua transaksi pemesanan
                 $result = $pemesananJasaModel->getTransaksiPemesananJasaJoinPembayaran();
             }
-            error_log("result : ".json_encode($result));
+            error_log("result : " . json_encode($result));
         } catch (\Throwable $th) {
             //throw $th;
-                error_log("error get data pemesanan : ".$th->getMessage());
+            error_log("error get data pemesanan : " . $th->getMessage());
         }
         $data = [
             'transaksi' => $result,
@@ -53,24 +53,25 @@ class PemesananJasaController extends BaseController
         $jasaModel = new JasaModel();
         try {
             //code...
-            $jasaData = $jasaModel->findAll();
+            $jasaData = $jasaModel->where('is_deleted', 0)->findAll();
             $data = [
                 'jasas' => $jasaData
             ];
             return view('pages/pemesanan_jasa_add', $data);
         } catch (\Throwable $th) {
             //throw $th;
-            error_log("error get data jasa : ".$th->getMessage());
+            error_log("error get data jasa : " . $th->getMessage());
             throw $th;
         }
     }
 
-    public function save(){
+    public function save()
+    {
         error_log("start save pemesanan jasa");
         $pesanJasaModel = new PemesananJasaModel();
         $pembayaranModel = new PembayaranModel();
         $idUser = session()->get('user_id');
-        
+
 
         db_connect()->transStart(); // Start transaction
         try {
@@ -89,7 +90,7 @@ class PemesananJasaController extends BaseController
             //     return redirect()->to('/penyewaan-table')->with('error', 'Alat sudah terbooking atau tidak tersedia');
             // }
 
-            $cachePelanggan = getCache(Constants::PELANGGAN_KEY.$idUser);
+            $cachePelanggan = getCache(Constants::PELANGGAN_KEY . $idUser);
             $dataPemesanan = [
                 'id_jasa' => $this->request->getPost('jasa'),
                 'id_pelanggan' => $cachePelanggan['id_pelanggan'],
@@ -120,26 +121,27 @@ class PemesananJasaController extends BaseController
             if ($pemayaran === false || $pemayaran === null) {
                 error_log("error insert pembayaran");
                 $errors = $pembayaranModel->errors(); // Ambil pesan error validasi
-                throw new \RuntimeException("Gagal save table pembayaran: ". implode(', ', $errors));
+                throw new \RuntimeException("Gagal save table pembayaran: " . implode(', ', $errors));
             }
             db_connect()->transComplete(); // Commit transaction
         } catch (\Throwable $th) {
             //throw $th;
             db_connect()->transRollback(); // Rollback transaction
-            error_log("error save Pemesanan : ".$th->getMessage());
+            error_log("error save Pemesanan : " . $th->getMessage());
             // return redirect()->to('/Pemesanan-table')->with('error', 'Pemesanan gagal ditambahkan');
         }
 
-        
+
         return redirect()->to('/pemesanan-table')->with('success', 'Pemesanan berhasil ditambahkan');
     }
 
-    public function getJadwal(){
+    public function getJadwal()
+    {
         error_log("start get jadwal booked");
         $pemesananJasaModel = new PemesananJasaModel();
         try {
             $idJasa = $this->request->getPost('id_jasa');
-            error_log("id jasa : ".$idJasa);
+            error_log("id jasa : " . $idJasa);
             $startDate = new DateTime('now');
             $endDate = new DateTime('+10 day');
 
@@ -163,7 +165,7 @@ class PemesananJasaController extends BaseController
                 for ($hour = 9; $hour <= 18; $hour++) {
                     $waktu = sprintf('%02d:00', $hour);
                     $slot = $tanggal . ' ' . $waktu;
-                    
+
                     $availableSlots[$tanggal][] = [
                         'time' => $waktu,
                         'booked' => isset($bookedSlots[$tanggal][$waktu])
@@ -180,7 +182,7 @@ class PemesananJasaController extends BaseController
             ]);
         } catch (\Throwable $th) {
             //throw $th;
-            error_log("error get jadwal : ".$th->getMessage());
+            error_log("error get jadwal : " . $th->getMessage());
             throw $th;
         }
     }

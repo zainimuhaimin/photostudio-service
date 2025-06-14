@@ -7,7 +7,7 @@ use CodeIgniter\Model;
 class JasaModel extends Model
 {
     protected $table            = 'table_jasa';
-    protected $primaryKey       = 'id';
+    protected $primaryKey       = 'id_jasa';
     protected $useAutoIncrement = true;
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
@@ -41,4 +41,18 @@ class JasaModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function getJasaByIdJoinPemesananJasaJoinPembayaran($id_jasa)
+    {
+        $builder = $this->db->table('table_jasa as tj');
+        $builder->select('tj.nama_jasa, tj.harga_jasa, tj.deskripsi, tj.id_jasa');
+        $builder->join('table_pemensanan_jasa as tpj', 'tj.id_jasa = tpj.id_jasa');
+        $builder->join('table_pembayaran as tp', 'tpj.id_pemensanan = tp.id_pemensanan');
+        $builder->where('tj.id_jasa', $id_jasa);
+        $builder->where('tj.is_deleted', 0);
+        $builder->where('tpj.is_deleted', 0);
+        $builder->where('tp.is_deleted', 0);
+        $query = $builder->get();
+        return $query->getFirstRow();
+    }
 }

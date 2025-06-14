@@ -1,0 +1,65 @@
+<!-- get template -->
+<?= $this->extend('template/layout'); ?>
+<!-- end get template -->
+
+<!-- initiate section or render page title page name and pageSlash -->
+<?= $this->section('pageTitle'); ?>
+Form Edit Jasa
+<?= $this->endSection(); ?>
+
+<?= $this->section('page'); ?>
+Form Edit Jasa
+<?= $this->endSection(); ?>
+
+<?= $this->section('pageSlash'); ?>
+Form Edit Jasa
+<?= $this->endSection(); ?>
+<!-- end initiate -->
+
+<?= $this->section('content'); ?>
+<div class="flex flex-wrap -mx-2">
+  <div class="flex-none w-full max-w-full px-3">
+    <div class="relative flex flex-col min-w-0 mb-6 break-words bg-white border-0 border-transparent border-solid shadow-xl dark:bg-slate-850 dark:shadow-dark-xl rounded-2xl bg-clip-border">
+      <div class="space-x-4 justify-between flex p-6 pb-0 mb-0 border-b-0 border-b-solid rounded-t-2xl border-b-transparent">
+        <h6 class="dark:text-white">Edit Jasa</h6>
+      </div>
+      <div class="flex-auto px-0 pt-0 pb-2">
+        <div class="p-6 overflow-x-auto">
+          <form role="form text-left" action="<?= base_url() ?>jasa-update" method="POST">
+            <input type="hidden" name="idjasa" value="<?= $jasa['id_jasa'] ?>">
+            <div class="mb-4">
+              <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Nama Jasa</label>
+              <input value="<?= $jasa['nama_jasa'] ?>" autocomplete="off" name="namajasa" required type="text" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Nama Jasa" aria-label="namajasa" aria-describedby="email-addon" />
+            </div>
+            <div class="mb-4">
+              <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Harga Jasa</label>
+              <input value="<?= $jasa['harga_jasa'] ?>" autocomplete="off" name="hargasewa-format" required type="text" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Harga Sewa" aria-label="hargasewa" aria-describedby="email-addon" oninput="formatHarga(this)" />
+              <input type="hidden" name="hargajasa" id="harga-real" value="">
+            </div>
+            <div class="mb-4">
+              <label class="mb-2 ml-1 font-bold text-xs text-slate-700">Deskripsi</label>
+              <input value="<?= $jasa['deskripsi'] ?>" autocomplete="off" name="deskripsi" required type="textarea" class="placeholder:text-gray-500 text-sm focus:shadow-primary-outline leading-5.6 ease block w-full appearance-none rounded-lg border border-solid border-gray-300 bg-white bg-clip-padding py-2 px-3 font-normal text-gray-700 transition-all focus:border-blue-500 focus:bg-white focus:text-gray-700 focus:outline-none focus:transition-shadow" placeholder="Deskripsi" aria-label="deskripsi" aria-describedby="email-addon" />
+            </div>
+            <div class="text-center">
+              <button type="submit" class="inline-block w-full px-5 py-2.5 mt-6 mb-2 font-bold text-center text-white align-middle transition-all bg-transparent border-0 rounded-lg cursor-pointer active:opacity-85 hover:-translate-y-px hover:shadow-xs leading-normal text-sm ease-in tracking-tight-rem shadow-md bg-150 bg-x-25 bg-gradient-to-tl from-zinc-800 to-zinc-700 hover:border-slate-700 hover:bg-slate-700 hover:text-white">Ubah</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  function formatHarga(el) {
+    let raw = el.value.replace(/[^\d]/g, ''); // hanya angka
+    let formatted = new Intl.NumberFormat('id-ID').format(raw);
+
+    el.value = 'Rp ' + formatted;
+    document.getElementById('harga-real').value = raw;
+  }
+
+  window.onload = () => {
+    formatHarga(document.querySelector('input[name="hargasewa-format"]'));
+  }
+</script>
+<?= $this->endSection(); ?>
