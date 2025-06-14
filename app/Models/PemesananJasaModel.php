@@ -42,9 +42,10 @@ class PemesananJasaModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getTransaksiPemesananJasaJoinPembayaranByIdPelanggan($id_pelanggan){
+    public function getTransaksiPemesananJasaJoinPembayaranByIdPelanggan($id_pelanggan)
+    {
         $builder = $this->db->table('table_pemensanan_jasa');
-        $builder->select('table_pemensanan_jasa.*, table_pembayaran.status_pembayaran, table_jasa.*');
+        $builder->select('table_pemensanan_jasa.*, table_pembayaran.*, table_jasa.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_pemensanan = table_pemensanan_jasa.id_pemensanan');
         $builder->join('table_jasa', 'table_jasa.id_jasa = table_pemensanan_jasa.id_jasa');
         $builder->where('table_pemensanan_jasa.id_pelanggan', $id_pelanggan);
@@ -52,18 +53,20 @@ class PemesananJasaModel extends Model
         return $query->getResultArray();
     }
 
-    public function getTransaksiPemesananJasaJoinPembayaran(){
+    public function getTransaksiPemesananJasaJoinPembayaran()
+    {
         $builder = $this->db->table('table_pemensanan_jasa');
-        $builder->select('table_pemensanan_jasa.*, table_pembayaran.status_pembayaran, table_jasa.*');
+        $builder->select('table_pemensanan_jasa.*, table_pembayaran.*, table_jasa.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_pemensanan = table_pemensanan_jasa.id_pemensanan');
         $builder->join('table_jasa', 'table_jasa.id_jasa = table_pemensanan_jasa.id_jasa');
         $query = $builder->get();
         return $query->getResultArray();
     }
 
-    public function getBookedPemesananJasa($startDate, $endDate, $idJasa){
+    public function getBookedPemesananJasa($startDate, $endDate, $idJasa)
+    {
         error_log("start get booked pemesanan jasa");
-        error_log("id jasa : ".$idJasa);
+        error_log("id jasa : " . $idJasa);
         $startDate = $startDate->format('Y-m-d');
         $endDate = $endDate->format('Y-m-d');
         $builder = $this->db->table('table_pemensanan_jasa');
@@ -74,5 +77,16 @@ class PemesananJasaModel extends Model
         $builder->where('table_pemensanan_jasa.tanggal <= ', $endDate);
         $query = $builder->get();
         return $query->getResultArray();
+    }
+
+    public function getPenyewaanJoinPembayaranByIdPemesanan($idPemesanan)
+    {
+        $builder = $this->db->table('table_pemensanan_jasa');
+        $builder->select('table_pemensanan_jasa.*, table_pembayaran.*, table_jasa.*');
+        $builder->join('table_pembayaran', 'table_pembayaran.id_pemensanan = table_pemensanan_jasa.id_pemensanan');
+        $builder->join('table_jasa', 'table_jasa.id_jasa = table_pemensanan_jasa.id_jasa');
+        $builder->where('table_pemensanan_jasa.id_pemensanan', $idPemesanan);
+        $query = $builder->get();
+        return $query->getRowArray();
     }
 }

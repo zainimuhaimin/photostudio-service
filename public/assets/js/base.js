@@ -1,10 +1,14 @@
 function getJadwalPemesananJasa(base_url, id) {
+	const pathSegments = window.location.pathname.split("/").filter(Boolean);
+	const idPemesanan = pathSegments[pathSegments.length - 1];
+	console.log("ID dari URL:", idPemesanan);
 	console.log("id jasa base js " + id);
 	$.ajax({
 		url: base_url + "pemesanan/get-jadwal",
 		type: "POST",
 		data: {
 			id_jasa: id,
+			id_pemesanan: idPemesanan,
 		},
 		dataType: "json",
 		beforeSend: function (xhr) {
@@ -29,7 +33,7 @@ function getJadwalPemesananJasa(base_url, id) {
 				maxTime: "18:00",
 				minuteIncrement: 60,
 				allowInput: false,
-				onChange: function (selectedDates, dateStr, instance) {
+				onClose: function (selectedDates, dateStr, instance) {
 					const timePattern = /\d{2}:\d{2}/;
 					let date = selectedDates[0];
 					// Get date value in YYYY-MM-DD format
@@ -56,12 +60,20 @@ function getJadwalPemesananJasa(base_url, id) {
 								console.log(time, isBooked);
 								// Check if selected time is in booked slots
 								if (selectedTime === time) {
-									alert(
-										"Jasa Yang Kamu Pilih Sudah TerBooking Pada Jam " +
+									Swal.fire({
+										title: "Data Sudah Terbooking",
+										text:
+											"Alat Yang Kamu Pilih Sudah TerBooking Pada Jam" +
 											time +
-											", Silahkan Pilih Jam Lain"
-									);
-									instance.clear(); // Clear the selected date/time
+											", Silahkan Pilih Jam Lain !",
+										icon: "warning",
+										confirmButtonText: "Oke!",
+									}).then((result) => {
+										if (result.isConfirmed) {
+											console.log("User confirmed");
+											instance.clear();
+										}
+									});
 									return;
 								}
 							}
@@ -78,11 +90,15 @@ function getJadwalPemesananJasa(base_url, id) {
 
 function getJadwalPenyewaanAlat(base_url, id) {
 	console.log("id alat base js " + id);
+	const pathSegments = window.location.pathname.split("/").filter(Boolean);
+	const idPenyewaan = pathSegments[pathSegments.length - 1];
+	console.log("ID dari URL:", idPenyewaan);
 	$.ajax({
 		url: base_url + "penyewaan/get-jadwal",
 		type: "POST",
 		data: {
 			id_alat: id,
+			id_penyewaan: idPenyewaan,
 		},
 		dataType: "json",
 		beforeSend: function (xhr) {
@@ -107,7 +123,7 @@ function getJadwalPenyewaanAlat(base_url, id) {
 				maxTime: "18:00",
 				minuteIncrement: 60,
 				allowInput: false,
-				onChange: function (selectedDates, dateStr, instance) {
+				onClose: function (selectedDates, dateStr, instance) {
 					const timePattern = /\d{2}:\d{2}/;
 					let date = selectedDates[0];
 					// Get date value in YYYY-MM-DD format
@@ -134,12 +150,20 @@ function getJadwalPenyewaanAlat(base_url, id) {
 								console.log(time, isBooked);
 								// Check if selected time is in booked slots
 								if (selectedTime === time) {
-									alert(
-										"Alat Yang Kamu Pilih Sudah TerBooking Pada Jam " +
+									Swal.fire({
+										title: "Data Sudah Terbooking",
+										text:
+											"Alat Yang Kamu Pilih Sudah TerBooking Pada Jam" +
 											time +
-											", Silahkan Pilih Jam Lain"
-									);
-									instance.clear(); // Clear the selected date/time
+											", Silahkan Pilih Jam Lain !",
+										icon: "warning",
+										confirmButtonText: "Oke!",
+									}).then((result) => {
+										if (result.isConfirmed) {
+											console.log("User confirmed");
+											instance.clear();
+										}
+									});
 									return;
 								}
 							}

@@ -22,22 +22,22 @@ class PenyewaanAlatController extends BaseController
         $sewaAlatModel = new PenyewaanAlatModel();
         try {
             $cacheRole = getCacheHashMap(Constants::ROLE_KEY_HASHMAP, Constants::ROLE_USER);
-            error_log("cache role : ".json_encode($cacheRole));
+            error_log("cache role : " . json_encode($cacheRole));
             //validasi jika user rolenya USER maka ambil data current user
             $result = [];
             if (session()->get('role') == $cacheRole['id_role']) {
                 $idUser = session()->get('user_id');
-                $cachePelanggan = getCache(Constants::PELANGGAN_KEY.$idUser);
-                error_log("cache pelanggan : ".json_encode($cachePelanggan));
+                $cachePelanggan = getCache(Constants::PELANGGAN_KEY . $idUser);
+                error_log("cache pelanggan : " . json_encode($cachePelanggan));
                 //role user ambil transaksi penyewaan yang current user saja
                 $result = $sewaAlatModel->getTransaksiSewaJoinPembayaranByIdPelanggan($cachePelanggan['id_pelanggan']);
             } else {
                 $result = $sewaAlatModel->getTransaksiSewaJoinPembayaran();
             }
-            error_log("result : ".json_encode($result));
+            error_log("result : " . json_encode($result));
         } catch (\Throwable $th) {
             //throw $th;
-            error_log("error get data penyewaan : ".$th->getMessage());
+            error_log("error get data penyewaan : " . $th->getMessage());
         }
         $data = [
             'transaksi' => $result,
@@ -49,38 +49,25 @@ class PenyewaanAlatController extends BaseController
     public function add()
     {
         $alatModel = new AlatModel();
-        $alatData = $alatModel->findAll();
+        $alatData = $alatModel->where('is_deleted', 0)->findAll();
+        error_log("alat data : " . json_encode($alatData));
         $data = [
             'alats' => $alatData,
         ];
         return view('pages/penyewaan_add', $data);
     }
 
-    public function save(){
+    public function save()
+    {
         error_log("start save penyewaan alat");
         $sewaAlatModel = new PenyewaanAlatModel();
         $pembayaranModel = new PembayaranModel();
         $idUser = session()->get('user_id');
-        
 
-        db_connect()->transStart(); // Start transaction
+
+        db_connect()->transStart();
         try {
-            // todo validasi data terbooking yang jadwalnya bentrok
-            // Validate if equipment is already booked for the requested date
-            // $requestedDate = parseAndFormatDate($this->request->getPost('jadwal'));
-            // $requestedAlatId = $this->request->getPost('alat');
-
-            // error_log("requested date : ".$requestedDate);
-            // error_log("requested alat id : ".$requestedAlatId);
-            // // Get existing bookings for the requested equipment and date
-            // $existingBookings = $sewaAlatModel->getDataBooked($requestedAlatId, $requestedDate);
-            // error_log("existing bookings : ".json_encode($existingBookings));
-            // if (!empty($existingBookings)) {
-            //     error_log("equipment is already booked or not available");
-            //     return redirect()->to('/penyewaan-table')->with('error', 'Alat sudah terbooking atau tidak tersedia');
-            // }
-
-            $cachePelanggan = getCache(Constants::PELANGGAN_KEY.$idUser);
+            $cachePelanggan = getCache(Constants::PELANGGAN_KEY . $idUser);
             $dataAlat = [
                 'id_alat' => $this->request->getPost('alat'),
                 'id_pelanggan' => $cachePelanggan['id_pelanggan'],
@@ -94,7 +81,7 @@ class PenyewaanAlatController extends BaseController
             $idPenyewaan = $sewaAlatModel->insert($dataAlat);
             if ($idPenyewaan === false || $idPenyewaan === null) {
                 error_log("error insert penyewaan");
-                $errors = $sewaAlatModel->errors(); // Ambil pesan error validasi
+                $errors = $sewaAlatModel->errors();
                 throw new \RuntimeException("Gagal save data penyewaan alat: " . implode(', ', $errors));
             }
             $dataPembayaran = [
@@ -111,38 +98,48 @@ class PenyewaanAlatController extends BaseController
             if ($pemayaran === false || $pemayaran === null) {
                 error_log("error insert pembayaran");
                 $errors = $pembayaranModel->errors(); // Ambil pesan error validasi
-                throw new \RuntimeException("Gagal save table pembayaran: ". implode(', ', $errors));
+                throw new \RuntimeException("Gagal save table pembayaran: " . implode(', ', $errors));
             }
-            db_connect()->transComplete(); // Commit transaction
+            db_connect()->transComplete();
         } catch (\Throwable $th) {
-            //throw $th;
-            db_connect()->transRollback(); // Rollback transaction
-            error_log("error save penyewaan : ".$th->getMessage());
-            // return redirect()->to('/penyewaan-table')->with('error', 'Penyewaan gagal ditambahkan');
+            db_connect()->transRollback();
+            error_log("error save penyewaan : " . $th->getMessage());
+            throw $th;
         }
 
-        
+
         return redirect()->to('/penyewaan-table')->with('success', 'Penyewaan berhasil ditambahkan');
     }
 
-    public function getJadwal(){
+    public function getJadwal()
+    {
         error_log("start get jadwal booked");
         $sewaAlatModel = new PenyewaanAlatModel();
         try {
             $idAlat = $this->request->getPost('id_alat');
-            error_log("id alat : ".$idAlat);
+            $idPenyewaan = $this->request->getPost('id_penyewaan');
+            error_log("id alat : " . $idAlat);
             $startDate = new DateTime('now');
             $endDate = new DateTime('+10 day');
+            $dataPenyewaan = [];
+            if ($idPenyewaan) {
+                $dataPenyewaan = $sewaAlatModel->where('id_penyewaan', $idPenyewaan)->first();
+                error_log("data penyewaan : " . json_encode($dataPenyewaan));
+            }
 
             // Get all booked slots between start and end date
             $booked = $sewaAlatModel->getBookedPenyewaanAlat($startDate, $endDate, $idAlat);
-            error_log("booked : ".json_encode($booked));
             $bookedSlots = [];
             foreach ($booked as $b) {
                 list($tanggal, $waktu) = explode(' ', $b['tanggal']);
                 $jam = substr($waktu, 0, 5);
-                $bookedSlots[$tanggal][$jam] = true;
+                if (!empty($dataPenyewaan) && $dataPenyewaan['id_penyewaan'] == $b['id_penyewaan']) {
+                    // do nothing
+                } else {
+                    $bookedSlots[$tanggal][$jam] = true;
+                }
             }
+            error_log("booked slots : " . json_encode($bookedSlots));
 
             // Generate available time slots
             $availableSlots = [];
@@ -154,7 +151,6 @@ class PenyewaanAlatController extends BaseController
                 for ($hour = 9; $hour <= 18; $hour++) {
                     $waktu = sprintf('%02d:00', $hour);
                     $slot = $tanggal . ' ' . $waktu;
-                    
                     $availableSlots[$tanggal][] = [
                         'time' => $waktu,
                         'booked' => isset($bookedSlots[$tanggal][$waktu])
@@ -171,7 +167,65 @@ class PenyewaanAlatController extends BaseController
             ]);
         } catch (\Throwable $th) {
             //throw $th;
-            error_log("error get jadwal : ".$th->getMessage());
+            error_log("error get jadwal : " . $th->getMessage());
+            throw $th;
+        }
+    }
+
+    public function edit($id)
+    {
+        $sewaAlatModel = new PenyewaanAlatModel();
+        $alatModel = new AlatModel();
+        try {
+            $dataPenyewaan = $sewaAlatModel->getPenyewaanJoinPembayaranByIdPenyewaan($id);
+            error_log("penyewaan data : " . json_encode($dataPenyewaan));
+            $alatData = $alatModel->where('is_deleted', 0)->findAll();
+            error_log("alat data : " . json_encode($alatData));
+            $data = [
+                'penyewaan' => $dataPenyewaan,
+                'alats' => $alatData,
+            ];
+            return view('pages/penyewaan_edit', $data);
+        } catch (\Throwable $th) {
+            //throw $th;
+            error_log("error when get page edit penyewaan : " . $th->getMessage());
+            throw $th;
+        }
+    }
+
+    public function update()
+    {
+        error_log("start update penyewaan");
+        $sewaAlatModel = new PenyewaanAlatModel();
+        $pembayaranModel = new PembayaranModel();
+        $idPenyewaan = $this->request->getPost('id_penyewaan');
+        $idPembayaran = $this->request->getPost('id_pembayaran');
+        error_log("id penyewaan : " . $idPenyewaan);
+        error_log("id pembayaran : " . $idPembayaran);
+        db_connect()->transStart();
+        try {
+            $dataPembayaran = [
+                'metode_pembayaran' => $this->request->getPost('pembayaran-metode'),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session()->get('username'),
+            ];
+            error_log("data pembayaran : " . json_encode($dataPembayaran));
+            $pembayaranModel->update($idPembayaran, $dataPembayaran);
+            $dataPenyewaan = [
+                'id_alat' => $this->request->getPost('alat'),
+                'tanggal' => $this->request->getPost('jadwal'),
+                'total' => $this->request->getPost('hargasewa'),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session()->get('username'),
+            ];
+            error_log("data penyewaan : " . json_encode($dataPenyewaan));
+            $sewaAlatModel->update($idPenyewaan, $dataPenyewaan);
+            db_connect()->transComplete();
+            return redirect()->to('/penyewaan-table')->with('success', 'Penyewaan berhasil diupdate');
+        } catch (\Throwable $th) {
+            //throw $th;
+            db_connect()->transRollback();
+            error_log("error update penyewaan : " . $th->getMessage());
             throw $th;
         }
     }

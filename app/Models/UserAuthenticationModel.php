@@ -41,4 +41,11 @@ class UserAuthenticationModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+
+    public function getUserByUserId($id)
+    {
+        $this->select('user_authentication.*, table_pelanggan.*');
+        $this->join('table_pelanggan', 'table_pelanggan.id_user = user_authentication.id_user');
+        return $this->where('user_authentication.id_user', $id)->first();
+    }
 }

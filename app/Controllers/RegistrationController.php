@@ -16,7 +16,7 @@ class RegistrationController extends BaseController
 
     public function save()
     {
-    error_log('Start saving registration data');
+        error_log('Start saving registration data');
         // Validate form input
         $validation = \Config\Services::validation();
         $validation->setRules([
@@ -37,19 +37,19 @@ class RegistrationController extends BaseController
                 'errors' => [
                     'required' => 'Password is required'
                 ]
-                ],
-                'phoneNumber' => [
-                    'rules' =>'required',
-                    'errors' => [
-                       'required' => 'Phone number is required'
-                    ]
-                ],
-                'alamat' => [
-                    'rules' =>'required',
-                    'errors' => [
-                      'required' => 'Address is required'
-                    ]
-                ],
+            ],
+            'phoneNumber' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Phone number is required'
+                ]
+            ],
+            'alamat' => [
+                'rules' => 'required',
+                'errors' => [
+                    'required' => 'Address is required'
+                ]
+            ],
 
         ]);
         // Check if validation fails
@@ -60,7 +60,7 @@ class RegistrationController extends BaseController
             return redirect()->back()->withInput()->with('errors', $validation->getErrors());
         }
 
-       error_log('Validation passed');
+        error_log('Validation passed');
 
         // Save to databse using model
         $userAuthModel = new UserAuthenticationModel();
@@ -85,7 +85,7 @@ class RegistrationController extends BaseController
 
             // get validated data pelanggan
             $dataPelanggan = [
-                'nama' => $this->request->getPost('username'),
+                'nama' => $this->request->getPost('nama'),
                 'email' => $this->request->getPost('email'),
                 'alamat' => $this->request->getPost('alamat'),
                 'no_telp' => $this->request->getPost('phoneNumber'),

@@ -43,9 +43,10 @@ class PenyewaanAlatModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getTransaksiSewaJoinPembayaranByIdPelanggan($id_pelanggan){
+    public function getTransaksiSewaJoinPembayaranByIdPelanggan($id_pelanggan)
+    {
         $builder = $this->db->table('table_penyewaan_alat');
-        $builder->select('table_penyewaan_alat.*, table_pembayaran.status_pembayaran, table_alat.*');
+        $builder->select('table_penyewaan_alat.*, table_pembayaran.*, table_alat.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_penyewaan = table_penyewaan_alat.id_penyewaan');
         $builder->join('table_alat', 'table_alat.id_alat = table_penyewaan_alat.id_alat');
         $builder->where('table_penyewaan_alat.id_pelanggan', $id_pelanggan);
@@ -53,16 +54,18 @@ class PenyewaanAlatModel extends Model
         return $query->getResultArray();
     }
 
-    public function getTransaksiSewaJoinPembayaran(){
+    public function getTransaksiSewaJoinPembayaran()
+    {
         $builder = $this->db->table('table_penyewaan_alat');
-        $builder->select('table_penyewaan_alat.*, table_pembayaran.status_pembayaran, table_alat.*');
+        $builder->select('table_penyewaan_alat.*, table_pembayaran.*, table_alat.*');
         $builder->join('table_pembayaran', 'table_pembayaran.id_penyewaan = table_penyewaan_alat.id_penyewaan');
         $builder->join('table_alat', 'table_alat.id_alat = table_penyewaan_alat.id_alat');
         $query = $builder->get();
         return $query->getResultArray();
     }
-    
-    public function getDataBooked($requestedAlatId, $requestedDate){
+
+    public function getDataBooked($requestedAlatId, $requestedDate)
+    {
         $builder = $this->db->table('table_penyewaan_alat tpa');
         $builder->select('tpa.*');
         $builder->join('table_pembayaran tp', 'tp.id_penyewaan = tpa.id_penyewaan');
@@ -75,9 +78,10 @@ class PenyewaanAlatModel extends Model
         return $query->getResultArray();
     }
 
-    public function getBookedPenyewaanAlat($startDate, $endDate, $idAlat){
+    public function getBookedPenyewaanAlat($startDate, $endDate, $idAlat)
+    {
         error_log("start get booked pemesanan jasa");
-        error_log("id alat : ".$idAlat);
+        error_log("id alat : " . $idAlat);
         $startDate = $startDate->format('Y-m-d');
         $endDate = $endDate->format('Y-m-d');
         $builder = $this->db->table('table_penyewaan_alat');
@@ -88,5 +92,16 @@ class PenyewaanAlatModel extends Model
         $builder->where('table_penyewaan_alat.tanggal <= ', $endDate);
         $query = $builder->get();
         return $query->getResultArray();
+    }
+
+    public function getPenyewaanJoinPembayaranByIdPenyewaan($id_penyewaan)
+    {
+        $builder = $this->db->table('table_penyewaan_alat');
+        $builder->select('table_penyewaan_alat.*, table_pembayaran.*, table_alat.*');
+        $builder->join('table_pembayaran', 'table_pembayaran.id_penyewaan = table_penyewaan_alat.id_penyewaan');
+        $builder->join('table_alat', 'table_alat.id_alat = table_penyewaan_alat.id_alat');
+        $builder->where('table_penyewaan_alat.id_penyewaan', $id_penyewaan);
+        $query = $builder->get();
+        return $query->getRowArray();
     }
 }
