@@ -42,11 +42,15 @@ $routes->get('/penyewaan-table', 'PenyewaanAlatController::index', ['filter' => 
 $routes->get('/penyewaan-add', 'PenyewaanAlatController::add', ['filter' => 'auth']);
 $routes->post('/penyewaan-save', 'PenyewaanAlatController::save', ['filter' => 'auth']);
 $routes->post('/penyewaan/get-jadwal', 'PenyewaanAlatController::getJadwal', ['filter' => 'auth']);
+$routes->get('/penyewaan-edit/(:num)', 'PenyewaanAlatController::edit/$1', ['filter' => 'auth']);
+$routes->post('/penyewaan-update', 'PenyewaanAlatController::update', ['filter' => 'auth']);
 
 $routes->get('/pemesanan-table', 'PemesananJasaController::index', ['filter' => 'auth']);
 $routes->get('/pemesanan-add', 'PemesananJasaController::add', ['filter' => 'auth']);
 $routes->post('/pemesanan-save', 'PemesananJasaController::save', ['filter' => 'auth']);
 $routes->post('/pemesanan/get-jadwal', 'PemesananJasaController::getJadwal', ['filter' => 'auth']);
+$routes->get('/pemesanan-edit/(:num)', 'PemesananJasaController::edit/$1', ['filter' => 'auth']);
+$routes->post('/pemesanan-update', 'PemesananJasaController::update', ['filter' => 'auth']);
 
 $routes->get('/pembayaran-table', 'PembayaranController::index', ['filter' => 'auth']);
 $routes->get('/pembayaran-detail/(:num)', 'PembayaranController::detail/$1', ['filter' => 'auth']);

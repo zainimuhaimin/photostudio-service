@@ -18,11 +18,10 @@ class PelangganController extends BaseController
         $pelanggnModel = new PelangganModel();
         $userRole = getCacheHashMap(Constants::ROLE_KEY_HASHMAP, Constants::ROLE_USER);
         $userId = session()->get('user_id');
-        $pelanggan = cache()->get(Constants::PELANGGAN_KEY.$userId);
+        $pelanggan = cache()->get(Constants::PELANGGAN_KEY . $userId);
         $dataPelanggan = [];
-        if(session()->get('role') == $userRole['id_role']){
+        if (session()->get('role') == $userRole['id_role']) {
             $dataPelanggan = $pelanggnModel->where('is_deleted', '0')->where('id_pelanggan', $pelanggan['id_pelanggan'])->findAll();
-
         } else {
             $dataPelanggan = $pelanggnModel->where('is_deleted', '0')->findAll();
         }
@@ -64,7 +63,7 @@ class PelangganController extends BaseController
         $cache = getCache(Constants::ROLE_KEY_HASHMAP, Constants::ROLE_USER);
         $roleCache = $cache[Constants::ROLE_USER];
         if ($roleRequest == $roleCache['id_role']) {
-                $dataPelanggan = [
+            $dataPelanggan = [
                 'nama' => $this->request->getPost('username'),
                 'email' => $this->request->getPost('email'),
                 'alamat' => $this->request->getPost('alamat'),
@@ -74,7 +73,6 @@ class PelangganController extends BaseController
                 'created_by' => session('username'),
             ];
             $pelangganModel->insert($dataPelanggan);
-            
         }
         return redirect()->to('/pelanggan-table')->with('success', 'Pelanggan berhasil ditambahkan');;
     }
@@ -82,7 +80,7 @@ class PelangganController extends BaseController
     public function delete($id)
     {
         error_log("start delete pelanggan");
-        error_log("id : ". $id);
+        error_log("id : " . $id);
         $pelangganModel = new PelangganModel();
         $userAuthModel = new UserAuthenticationModel();
         try {
@@ -127,31 +125,30 @@ class PelangganController extends BaseController
             return view('pages/pelanggan_edit', $data);
         } catch (\Throwable $th) {
             //throw $th;
-            error_log("error when get page edit pelanggan : ". $th->getMessage());
+            error_log("error when get page edit pelanggan : " . $th->getMessage());
             throw $th;
         }
     }
 
-public function update()
-{
-    $pelangganModel = new PelangganModel();
-    
-    try {
-        $id = $this->request->getPost('id');
-        $data = [
-            'email' => $this->request->getPost('email'), 
-            'no_telp' => $this->request->getPost('phoneNumber'),
-            'alamat' => $this->request->getPost('alamat'),
-            'updated_at' => date('Y-m-d H:i:s'),
-            'updated_by' => session('username')
-        ];
+    public function update()
+    {
+        $pelangganModel = new PelangganModel();
 
-        $pelangganModel->update($id, $data);
+        try {
+            $id = $this->request->getPost('id');
+            $data = [
+                'email' => $this->request->getPost('email'),
+                'no_telp' => $this->request->getPost('phoneNumber'),
+                'alamat' => $this->request->getPost('alamat'),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session('username')
+            ];
 
-        return redirect()->to('/pelanggan-table')->with('success', 'Customer updated successfully');
-        
-    } catch (\Exception $e) {
-        return redirect()->back()->with('error', 'Failed to update customer: ' . $e->getMessage());
+            $pelangganModel->update($id, $data);
+
+            return redirect()->to('/pelanggan-table')->with('success', 'Customer updated successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Failed to update customer: ' . $e->getMessage());
+        }
     }
-}
 }

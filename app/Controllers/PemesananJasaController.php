@@ -141,9 +141,16 @@ class PemesananJasaController extends BaseController
         $pemesananJasaModel = new PemesananJasaModel();
         try {
             $idJasa = $this->request->getPost('id_jasa');
+            $idPemesanan = $this->request->getPost('id_pemesanan');
             error_log("id jasa : " . $idJasa);
+            error_log("id pemesanan : " . $idPemesanan);
             $startDate = new DateTime('now');
             $endDate = new DateTime('+10 day');
+            $dataPemesanan = [];
+            if ($idPemesanan) {
+                $dataPemesanan = $pemesananJasaModel->where('id_pemensanan', $idPemesanan)->first();
+                error_log("data pemesanan : " . json_encode($dataPemesanan));
+            }
 
             // Get all booked slots between start and end date
             $booked = $pemesananJasaModel->getBookedPemesananJasa($startDate, $endDate, $idJasa);
@@ -152,7 +159,12 @@ class PemesananJasaController extends BaseController
             foreach ($booked as $b) {
                 list($tanggal, $waktu) = explode(' ', $b['tanggal']);
                 $jam = substr($waktu, 0, 5);
-                $bookedSlots[$tanggal][$jam] = true;
+                // $bookedSlots[$tanggal][$jam] = true;
+                if (!empty($dataPemesanan) && $dataPemesanan['id_pemensanan'] == $b['id_pemensanan']) {
+                    // do nothing
+                } else {
+                    $bookedSlots[$tanggal][$jam] = true;
+                }
             }
 
             // Generate available time slots
@@ -183,6 +195,64 @@ class PemesananJasaController extends BaseController
         } catch (\Throwable $th) {
             //throw $th;
             error_log("error get jadwal : " . $th->getMessage());
+            throw $th;
+        }
+    }
+
+    public function edit($id)
+    {
+        error_log("start edit pemesanan jasa");
+        $pemesananJasaModel = new PemesananJasaModel();
+        $pembayaranModel = new PembayaranModel();
+        $jasaModel = new JasaModel();
+        try {
+            $jasaData = $jasaModel->where('is_deleted', 0)->findAll();
+            $pemesananData = $pemesananJasaModel->getPenyewaanJoinPembayaranByIdPemesanan($id);
+            $data = [
+                'jasas' => $jasaData,
+                'pemesanan' => $pemesananData
+            ];
+            return view('pages/pemesanan_jasa_edit', $data);
+        } catch (\Throwable $th) {
+            //throw $th;
+            error_log("error get pemesanan jasa : " . $th->getMessage());
+            throw $th;
+        }
+    }
+
+    public function update()
+    {
+        error_log("start update pemesanan jasa");
+        $pemesananJasaModel = new PemesananJasaModel();
+        $pembayaranModel = new PembayaranModel();
+        $idPemesanan = $this->request->getPost('idPemesanan');
+        $idPembayaran = $this->request->getPost('idPembayaran');
+        error_log("id pemesanan : " . $idPemesanan);
+        error_log("id pembayaran : " . $idPembayaran);
+        db_connect()->transStart();
+        try {
+            $dataPembayaran = [
+                'metode_pembayaran' => $this->request->getPost('pembayaran-metode'),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session()->get('username'),
+            ];
+            error_log("data pembayaran : " . json_encode($dataPembayaran));
+            $pembayaranModel->update($idPembayaran, $dataPembayaran);
+            $dataPemesanan = [
+                'id_jasa' => $this->request->getPost('jasa'),
+                'tanggal' => $this->request->getPost('jadwal'),
+                'total' => $this->request->getPost('hargasewa'),
+                'updated_at' => date('Y-m-d H:i:s'),
+                'updated_by' => session()->get('username'),
+            ];
+            error_log("data pemesanan : " . json_encode($dataPemesanan));
+            $pemesananJasaModel->update($idPemesanan, $dataPemesanan);
+            db_connect()->transComplete();
+            return redirect()->to('/pemesanan-table')->with('success', 'Pemesanan berhasil diupdate');
+        } catch (\Throwable $th) {
+            //throw $th;
+            db_connect()->transRollback();
+            error_log("error update pemesanan jasa : " . $th->getMessage());
             throw $th;
         }
     }
