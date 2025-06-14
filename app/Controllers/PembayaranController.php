@@ -278,7 +278,7 @@ class PembayaranController extends BaseController
             $email = \Config\Services::email();
             $to = empty($dataPembayaran->email_pesan_jasa) ? $dataPembayaran->email_sewa_alat : $dataPembayaran->email_pesan_jasa;
             error_log("to : " . $to);
-            $email->setFrom('mangeta7@gmail.com', 'Studio Service');
+            $email->setFrom('ngadmin@mail.com', 'Studio Service');
             $email->setTo($to);
             $email->setSubject('Konfirmasi Pembayaran');
 
