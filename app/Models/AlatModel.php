@@ -43,11 +43,26 @@ class AlatModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getAllAlat(){
+    public function getAllAlat()
+    {
         $builder = $this->db->table('table_alat as ta');
         $builder->select('ta.nama_alat, ta.harga_alat, ta.deskripsi, ta.id_alat');
         $builder->where('is_deleted', 0);
         $query = $builder->get();
         return $query->getResultArray();
+    }
+
+    public function getAlatByIdJoinPenyewaanAlatJoinPembayaran($id_alat)
+    {
+        $builder = $this->db->table('table_alat as ta');
+        $builder->select('ta.nama_alat, ta.harga_alat, ta.deskripsi, ta.id_alat');
+        $builder->join('table_penyewaan_alat as tpa', 'ta.id_alat = tpa.id_alat');
+        $builder->join('table_pembayaran as tp', 'tpa.id_penyewaan = tp.id_penyewaan');
+        $builder->where('ta.id_alat', $id_alat);
+        $builder->where('ta.is_deleted', 0);
+        $builder->where('tpa.is_deleted', 0);
+        $builder->where('tp.is_deleted', 0);
+        $query = $builder->get();
+        return $query->getResult();
     }
 }

@@ -25,6 +25,10 @@ $routes->get('/alat-table', 'AlatController::index', ['filter' => 'auth']);
 $routes->get('/alat-add', 'AlatController::add', ['filter' => 'auth']);
 $routes->post('/alat-save', 'AlatController::save', ['filter' => 'auth']);
 $routes->get('/alat/get-image/(:num)', 'AlatController::getImage/$1', ['filter' => 'auth']);
+$routes->get('/alat/pelanggan-get-transaction-data/(:num)', 'AlatController::getAlatByIdJoinTransaction/$1', ['filter' => 'auth']);
+$routes->delete('/alat-delete/(:num)', 'AlatController::delete/$1', ['filter' => 'auth']);
+$routes->get('/alat-edit/(:num)', 'AlatController::edit/$1', ['filter' => 'auth']);
+$routes->post('/alat-update', 'AlatController::update', ['filter' => 'auth']);
 
 $routes->get('/jasa-table', 'JasaController::index', ['filter' => 'auth']);
 $routes->get('/jasa-add', 'JasaController::add', ['filter' => 'auth']);
